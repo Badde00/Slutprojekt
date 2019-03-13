@@ -9,17 +9,24 @@ namespace Slutprojekt
     abstract class BaseEnemy : BaseUnit
     {
         protected int hp;
-        protected int dangerLevel;
-        protected int round;
+        protected int maxHp;
+        protected int dangerLevel; //Detta ska vara ett nummer som påverkar hur torn attakerar. 
+        protected int round; //Fiender ska bli starkare senare om de har "attakera starkaste fienden" inställningen på
         protected float velocity;
+        protected float distanceTraveled; //Så torn kan attakera fienden som har gått längst 
         protected int dmg;
         protected int gold;
-        protected Projectile p;
 
         public int Hp
         {
             get;
-            private set;
+            set;
+        }
+
+        public int MaxHp
+        {
+            get;
+            set;
         }
 
         public int DangerLevel
@@ -27,35 +34,6 @@ namespace Slutprojekt
             get;
             private set;
         }
-
-        public int Round
-        {
-            get;
-            private set;
-        }
-
-        public float Velocity
-        {
-            get;
-            private set;
-        }
-
-        public int Dmg
-        {
-            get;
-            private set;
-        }
-
-        public int Gold
-        {
-            get;
-            private set;
-        }
-
-        public Projectile P
-        {
-            get;
-            private set;
-        }
+        
     }
 }

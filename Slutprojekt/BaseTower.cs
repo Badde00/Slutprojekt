@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,49 @@ namespace Slutprojekt
 {
     abstract class BaseTower : BaseUnit
     {
+        private List<BaseEnemy> enemiesClose = new List<BaseEnemy>(); //ska innehålla alla fiender inom tornets radie.
+        private float aps; //attacks per second. Mellanrummet mellan attacker kommer att vara t=1/aps
+        private int dmg;
+        private int radius; //Hur långt bort torner "ser"
+        private int pierce; //Hur många fiender det kan träffa
+        private int cost;
+        private float projectileSpeed; //double för att Math.cos() behöver det
+        private double projectileDegreeDir; //I grader för vart tornet ska skjuta. kommer att användas med cos och sin för förflyttning
+        private Projectile p; //För eventuella projektiltyper, kommer att göra projektiler i torn, sedan skicka till game.
+        private int dmgCaused;
+        private Texture2D projectileTex;
+
+
+        public int Radius
+        {
+            get;
+            private set;
+        }
+
+        public int Cost
+        {
+            get;
+            private set;
+        }
+
+        public int DmgCaused
+        {
+            get;
+            private set;
+        }
+
+        public virtual void MakeProjectile()
+        {
+            p = new Projectile(pierce, new Vector2((float)Math.Cos(projectileDegreeDir) * projectileSpeed, (float)Math.Sin(projectileDegreeDir) * projectileSpeed),dmg, tex, pos, )
+        }
+
+
+
+        //Måste göras
+
+        /*private void FindEnemy() 
+        {
+
+        }*/
     }
 }
