@@ -41,9 +41,25 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BaseEnemy.cs" />
+    <Compile Include="BaseTower.cs" />
+    <Compile Include="BaseUnit.cs" />
+    <Compile Include="T1U0.cs" />
+    <Compile Include="Enemy1.cs" />
+    <Compile Include="Enemy2.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="T1U1.cs" />
+    <Compile Include="T1U2.cs" />
+    <Compile Include="T1U3.cs" />
+    <Compile Include="T2U0.cs" />
+    <Compile Include="T2U1.cs" />
+    <Compile Include="T2U2.cs" />
+    <Compile Include="T2U3.cs" />
+    <Compile Include="Tower1.cs" />
+    <Compile Include="Tower2.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
