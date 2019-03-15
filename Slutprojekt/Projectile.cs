@@ -25,7 +25,7 @@ namespace Slutprojekt
         public Projectile(int zPierce, Vector2 zSpeed, int zDmg, Texture2D zTex, Vector2 zPos, Rectangle zHitBox)
         {
             description = null; //projektilerna behöver ingen description
-            hitbox = new Rectangle((int)pos.X, (int)pos.Y, Game1.Game.ProjectileTex.Width, Game1.Game.ProjectileTex.Height);
+            hitbox = new Rectangle((int)pos.X, (int)pos.Y, tex.Width, tex.Height);
 
             zPierce = pierce;
             zSpeed = speed;

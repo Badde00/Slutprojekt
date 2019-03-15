@@ -22,9 +22,10 @@ namespace Slutprojekt
         Paused
     }
 
-    public enum Menu //Startmeny knappar
+    public enum MenuEnum //Startmeny knappar
     {
-        Start,
+        StartL1,
+        StartL2,
         Settings,
         About,
         Exit
@@ -56,8 +57,10 @@ namespace Slutprojekt
         private Texture2D t2U2;
         private Texture2D t2U3;
         private Texture2D t2Projectile;
+        private Texture2D menuTex;
         private List<BaseEnemy> eList;
         private List<Projectile> pList;
+        private Menu menu;
 
         public Game1()
         {
@@ -79,8 +82,10 @@ namespace Slutprojekt
         protected override void Initialize()
         {
             base.Initialize();
+            this.IsMouseVisible = true;
             eList = new List<BaseEnemy>();
             pList = new List<Projectile>();
+            menu = new Menu(menuTex);
         }
         
         protected override void LoadContent()
@@ -97,7 +102,8 @@ namespace Slutprojekt
             t2U1 = Content.Load<Texture2D>("T2U1");
             t2U2 = Content.Load<Texture2D>("T2U2");
             t2U3 = Content.Load<Texture2D>("T2U3");
-            t2Projectile = Content.Load<Texture2D>("T2Projectile")
+            t2Projectile = Content.Load<Texture2D>("T2Projectile");
+            menuTex = Content.Load<Texture2D>("Menu");
         }
 
 
@@ -110,7 +116,6 @@ namespace Slutprojekt
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
 
             base.Update(gameTime);
         }

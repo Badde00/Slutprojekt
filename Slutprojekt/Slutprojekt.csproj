@@ -42,8 +42,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BaseEnemy.cs" />
+    <Compile Include="BaseMenu.cs" />
     <Compile Include="BaseTower.cs" />
     <Compile Include="BaseUnit.cs" />
+    <Compile Include="Menu.cs" />
+    <Compile Include="MenuObject.cs" />
+    <Compile Include="MenuObjectButton.cs" />
+    <Compile Include="MenuObjectText.cs" />
     <Compile Include="T1U0.cs" />
     <Compile Include="Enemy1.cs" />
     <Compile Include="Enemy2.cs" />
