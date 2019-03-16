@@ -43,6 +43,7 @@ namespace Slutprojekt
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        private Vector2 position;
         private static Game1 game; //Försöker kopiera hur du gjorde en "singelton" (tror jag det hette)
 
         private Texture2D bana1;
@@ -61,6 +62,7 @@ namespace Slutprojekt
         private List<BaseEnemy> eList;
         private List<Projectile> pList;
         private Menu menu;
+        private GameState gameState;
 
         public Game1()
         {
@@ -82,10 +84,12 @@ namespace Slutprojekt
         protected override void Initialize()
         {
             base.Initialize();
+            position = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
             this.IsMouseVisible = true;
             eList = new List<BaseEnemy>();
             pList = new List<Projectile>();
             menu = new Menu(menuTex);
+            gameState = GameState.Menu;
         }
         
         protected override void LoadContent()
@@ -116,6 +120,7 @@ namespace Slutprojekt
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            MouseState state = Mouse.GetState();
 
             base.Update(gameTime);
         }
