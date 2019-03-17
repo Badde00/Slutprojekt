@@ -10,17 +10,17 @@ namespace Slutprojekt
 {
     abstract class BaseTower : BaseUnit
     {
-        private List<BaseEnemy> enemiesClose = new List<BaseEnemy>(); //ska innehålla alla fiender inom tornets radie.
-        private float aps; //attacks per second. Mellanrummet mellan attacker kommer att vara t=1/aps
-        private int dmg;
-        private int radius; //Hur långt bort torner "ser"
-        private int pierce; //Hur många fiender det kan träffa
-        private int cost;
-        private float projectileSpeed; //double för att Math.cos() behöver det
-        private double projectileDegreeDir; //I grader för vart tornet ska skjuta. kommer att användas med cos och sin för förflyttning
-        private Projectile p; //För eventuella projektiltyper, kommer att göra projektiler i torn, sedan skicka till game.
-        private int dmgCaused;
-        private Texture2D projectileTex;
+        protected List<BaseEnemy> enemiesClose = new List<BaseEnemy>(); //ska innehålla alla fiender inom tornets radie.
+        protected float aps; //attacks per second. Mellanrummet mellan attacker kommer att vara t=1/aps
+        protected int dmg;
+        protected int radius; //Hur långt bort torner "ser"
+        protected int pierce; //Hur många fiender det kan träffa
+        protected int upgradeCost;
+        protected float projectileSpeed; //double för att Math.cos() behöver det
+        protected double projectileDegreeDir; //I grader för vart tornet ska skjuta. kommer att användas med cos och sin för förflyttning
+        protected Projectile p; //För eventuella projektiltyper, kommer att göra projektiler i torn, sedan skicka till game.
+        protected int dmgCaused;
+        protected Texture2D projectileTex;
 
 
         public int Radius

@@ -17,11 +17,11 @@ namespace Slutprojekt
             set;
         }
 
-        public MenuObjectText(string  t, Vector2 position)
+        public MenuObjectText(string  t, Vector2 position, Rectangle size)
         {
             text = t;
             pos = position;
-
+            hitbox = size;
         }
 
         public override void Update()

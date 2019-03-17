@@ -8,5 +8,11 @@ namespace Slutprojekt
 {
     class T1U0 : Tower1
     {
+        
+
+        public T1U0()
+        {
+            cost = 400;
+        }
     }
 }

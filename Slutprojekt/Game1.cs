@@ -59,10 +59,17 @@ namespace Slutprojekt
         private Texture2D t2U3;
         private Texture2D t2Projectile;
         private Texture2D menuTex;
-        private List<BaseEnemy> eList;
-        private List<Projectile> pList;
+        private int money;
+        private int t1U0Cost;
+        private int t2U0Cost;
+        private List<BaseUnit> unitsWhenPlaing;
         private Menu menu;
         private GameState gameState;
+        private SelectedTower selectedTower;
+        MouseState mouseState;
+        MouseState previousMouseState;
+        KeyboardState keyboardState;
+        KeyboardState previousKeyboardState;
 
         public Game1()
         {
@@ -86,10 +93,15 @@ namespace Slutprojekt
             base.Initialize();
             position = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
             this.IsMouseVisible = true;
-            eList = new List<BaseEnemy>();
-            pList = new List<Projectile>();
-            menu = new Menu(menuTex);
+            unitsWhenPlaing = new List<BaseUnit>();
+            MakeMenu();
             gameState = GameState.Menu;
+            selectedTower = SelectedTower.Empty;
+            previousMouseState = Mouse.GetState();
+            previousKeyboardState = Keyboard.GetState();
+            money = 1000;
+            t1U0Cost = 400;
+            t2U0Cost = 650;
         }
         
         protected override void LoadContent()
@@ -120,8 +132,19 @@ namespace Slutprojekt
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            MouseState state = Mouse.GetState();
+            mouseState = Mouse.GetState();
+            keyboardState = Keyboard.GetState();
+            if (gameState == GameState.Menu)
+                menu.Update();
 
+            if (gameState == GameState.Playing)
+            {
+                PlayingUpdate();
+            }
+
+
+            previousKeyboardState = Keyboard.GetState();
+            previousMouseState = Mouse.GetState();
             base.Update(gameTime);
         }
 
@@ -131,6 +154,41 @@ namespace Slutprojekt
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             base.Draw(gameTime);
+        }
+
+        private void MakeMenu() //Inte klar. Måste fixa knappar först
+        {
+            gameState = GameState.Menu;
+            List<MenuObject> menuObjectsList = new List<MenuObject>();
+            menuObjectsList.Add(new MenuObjectText("An Amazing Game", new Vector2(GraphicsDevice.Viewport.Width / 2, 100)), new Rectangle(((int)GraphicsDevice.Viewport.Width / 2), 100, 100, 50));
+            menu = new Menu();
+        }
+
+        private void StartLevel()
+        {
+            gameState = GameState.Playing;
+
+        }
+
+        private void PlayingUpdate()
+        {
+            foreach (BaseUnit u in unitsWhenPlaing)
+                u.Update();
+
+            if (keyboardState.IsKeyUp(Keys.NumPad1) && keyboardState.IsKeyDown(Keys.NumPad1) && money >= t1U0Cost)
+            {
+                selectedTower = SelectedTower.Tower1;
+            }
+
+            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed) //Placera torn
+            {
+
+            }
+        }
+
+        private void PlaceTower()
+        {
+
         }
     }
 }
