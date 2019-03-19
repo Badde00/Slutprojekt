@@ -70,6 +70,7 @@ namespace Slutprojekt
         MouseState previousMouseState;
         KeyboardState keyboardState;
         KeyboardState previousKeyboardState;
+        public delegate void EmptyTest2(int i);
 
         public Game1()
         {
@@ -160,7 +161,7 @@ namespace Slutprojekt
         {
             gameState = GameState.Menu;
             List<MenuObject> menuObjectsList = new List<MenuObject>();
-            menuObjectsList.Add(new MenuObjectText("An Amazing Game", new Vector2(GraphicsDevice.Viewport.Width / 2, 100)), new Rectangle(((int)GraphicsDevice.Viewport.Width / 2), 100, 100, 50));
+            menuObjectsList.Add(new MenuObjectButton(menuTex, position,  new Rectangle(100, 100, 10, 10), EmptyTest(1)));
             menu = new Menu();
         }
 
@@ -187,6 +188,12 @@ namespace Slutprojekt
         }
 
         private void PlaceTower()
+        {
+
+        }
+
+
+        public void EmptyTest(int i)
         {
 
         }
