@@ -11,7 +11,9 @@ namespace Slutprojekt
     abstract class BaseTower : BaseUnit
     {
         protected List<BaseEnemy> enemiesClose = new List<BaseEnemy>(); //ska innehålla alla fiender inom tornets radie.
-        protected float aps; //attacks per second. Mellanrummet mellan attacker kommer att vara t=1/aps
+        protected double aps; //attacks per second. Mellanrummet mellan attacker kommer att vara t=(1/aps)
+        protected double time = 0;
+        protected double previousTime = Game1.Game.Time;
         protected int dmg;
         protected int radius; //Hur långt bort torner "ser"
         protected int pierce; //Hur många fiender det kan träffa
@@ -29,7 +31,7 @@ namespace Slutprojekt
             private set;
         }
 
-        public int Cost
+        public int UpgradeCost
         {
             get;
             private set;
@@ -41,10 +43,29 @@ namespace Slutprojekt
             private set;
         }
 
-        public virtual void MakeProjectile()
+        public virtual Projectile MakeProjectile()
         {
-            p = new Projectile(pierce, new Vector2((float)Math.Cos(projectileDegreeDir) * projectileSpeed, (float)Math.Sin(projectileDegreeDir) * projectileSpeed),dmg, tex, pos, )
+            p = new Projectile(pierce, MakeProjVector(projectileSpeed, projectileDegreeDir), dmg, 
+                projectileTex, pos, new Rectangle((int)pos.X, (int)pos.Y, projectileTex.Width, projectileTex.Width));
+            return p;
         }
+
+        public override void Update()
+        {
+            time += Game1.Game.Time - previousTime;
+            if (time >= (1 / aps))
+            {
+                time -= (1 / aps);
+                Game1.Game.UnitsWhenPlaying.Add(MakeProjectile());
+            }
+        }
+
+        public Vector2 MakeProjVector(float speed, double angle) //Lättare att läsa
+        {
+            Vector2 temp = new Vector2(speed * (float)Math.Cos(angle), speed * (float)Math.Sin(angle));
+            return temp;
+        }
+        
 
 
 
