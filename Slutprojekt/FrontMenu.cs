@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 
 namespace Slutprojekt
 {
-    class Menu : BaseMenu
+    class FrontMenu : BaseMenu
     {
-
-
-        public Menu(Texture2D t, List<MenuObject> objects)
+        public FrontMenu(Texture2D t, List<MenuObject> objects)
         {
             tex = t;
             menuObjects = objects;
-
-
         }
 
         public override void Update()

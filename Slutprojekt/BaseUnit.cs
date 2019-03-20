@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Slutprojekt
 {
-    abstract class BaseUnit
+    public abstract class BaseUnit
     {
         protected Texture2D tex;
         protected Vector2 pos;

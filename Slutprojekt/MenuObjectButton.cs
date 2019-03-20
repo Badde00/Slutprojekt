@@ -14,7 +14,7 @@ namespace Slutprojekt
         private Vector2 mousePos;
         private MouseState previousState = Mouse.GetState();
         private MouseState state = Mouse.GetState();
-        protected Delegate delegateVar; //Vad knappen ska göra
+        private Func func;
 
         public Vector2 MousePos
         {
@@ -31,11 +31,9 @@ namespace Slutprojekt
         public override void Update()
         {
             state = Mouse.GetState();
-            mousePos.X = state.X;
-            mousePos.Y = state.Y;
             if (hitbox.Contains(mousePos) && state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed)
             {
-                
+                OnClick();
             }
 
 
@@ -43,9 +41,14 @@ namespace Slutprojekt
         }
 
 
-        public MenuObjectButton(Texture2D t, Vector2 pos, Rectangle hitB, Delegate m)
+        public void OnClick()
         {
-            delegateVar = m;
+            func.Invoke();
+        }
+
+        public MenuObjectButton(Texture2D t, Vector2 pos, Rectangle hitB, Func f)
+        {
+            func = f;
         }
     }
 }

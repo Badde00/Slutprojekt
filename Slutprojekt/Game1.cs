@@ -40,6 +40,8 @@ namespace Slutprojekt
         Tower2
     }
 
+    delegate void Func();
+
     /*För ev cirkel+collision, fråga tim först:
      https://stackoverflow.com/questions/24559585/how-to-create-a-circle-variable-in-monogame-and-detect-collision-with-other-circ
      */
@@ -67,12 +69,12 @@ namespace Slutprojekt
         private Texture2D t2U2;
         private Texture2D t2U3;
         private Texture2D t2Projectile;
-        private Texture2D menuTex;
+        private Texture2D frontMenuTex;
         private int money;
         private int t1U0Cost;
         private int t2U0Cost;
         private List<BaseUnit> unitsWhenPlaying;
-        private Menu menu;
+        private FrontMenu menu;
         private double time; 
         private int life;
         private GameState gameState;
@@ -85,6 +87,12 @@ namespace Slutprojekt
 
 
         public double Time
+        {
+            get;
+            private set;
+        }
+
+        public GraphicsDeviceManager Graphics
         {
             get;
             private set;
@@ -119,8 +127,6 @@ namespace Slutprojekt
             position = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
             this.IsMouseVisible = true;
             unitsWhenPlaying = new List<BaseUnit>();
-            MakeMenu();
-            gameState = GameState.Menu;
             selectedTower = SelectedTower.Empty;
             previousMouseState = Mouse.GetState();
             previousKeyboardState = Keyboard.GetState();
@@ -129,6 +135,9 @@ namespace Slutprojekt
             t2U0Cost = 650;
             time = 0;
             life = 100;
+
+
+            MakeStartMenu();
         }
         
         protected override void LoadContent()
@@ -146,7 +155,7 @@ namespace Slutprojekt
             t2U2 = Content.Load<Texture2D>("T2U2");
             t2U3 = Content.Load<Texture2D>("T2U3");
             t2Projectile = Content.Load<Texture2D>("T2Projectile");
-            menuTex = Content.Load<Texture2D>("Menu");
+            frontMenuTex = Content.Load<Texture2D>("Menu");
         }
 
 
@@ -193,16 +202,19 @@ namespace Slutprojekt
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            spriteBatch.Begin();
             base.Draw(gameTime);
+            menu.Draw(spriteBatch, graphics);
+            spriteBatch.End();
         }
 
-        private void MakeMenu() //Inte klar. Måste fixa knappar först
+        private void MakeStartMenu() //Inte klar. Måste fixa knappar först
         {
             gameState = GameState.Menu;
             List<MenuObject> menuObjectsList = new List<MenuObject>();
-            menuObjectsList.Add(new MenuObjectButton(menuTex, position,  new Rectangle(100, 100, 10, 10), EmptyTest(1)));
-            menu = new Menu();
+
+            menuObjectsList.Add(new MenuObjectButton(bana1, position,  new Rectangle(100, 100, 10, 10), StartLevel));
+            menu = new FrontMenu(frontMenuTex, menuObjectsList);
         }
 
         private void StartLevel()
@@ -242,7 +254,7 @@ namespace Slutprojekt
             if(s == SelectedTower.Tower1)
             {
                 money -= t1U0Cost;
-                unitsWhenPlaying.Add(new T1U0(t1U0, new Vector2(mouseState.Position.X, mouseState.Position.Y), t1Projectile));
+                unitsWhenPlaying.Add(new T1U0(t1U0, new Vector2(mouseState.Position.X, mouseState.Position.Y), t1Projectile, null));
                 selectedTower = SelectedTower.Empty;
             }
             else if(s == SelectedTower.Tower2)
