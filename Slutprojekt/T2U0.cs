@@ -10,13 +10,16 @@ namespace Slutprojekt
 {
     class T2U0 : Tower2
     {
-        public T2U0(Texture2D zTex, Vector2 zPos, Texture2D zProjectileTex)
+        public T2U0(Vector2 zPos, int? zDmgCaused)
         {
-            upgradeCost = 350;
-            tex = zTex;
+            upgradeCost = 475;
+            tex = Assets.T2U0;
             pos = zPos;
+
+            if (zDmgCaused == null)
+                zDmgCaused = 0;
             //hitbox
-            projectileTex = zProjectileTex;
+            projectileTex = Assets.T2Projectile;
         }
 
         public override void Update()

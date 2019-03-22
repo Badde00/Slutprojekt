@@ -41,6 +41,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assets.cs" />
     <Compile Include="BaseEnemy.cs" />
     <Compile Include="BaseMenu.cs" />
     <Compile Include="BaseTower.cs" />
@@ -74,6 +75,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Menu.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

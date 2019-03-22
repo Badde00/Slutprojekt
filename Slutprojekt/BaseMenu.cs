@@ -22,7 +22,11 @@ namespace Slutprojekt
 
         public virtual void Draw(SpriteBatch spriteBatch, GraphicsDeviceManager g)
         {
-            spriteBatch.Draw(tex, new Vector2(0), new Rectangle(0, 0, g.GraphicsDevice.Viewport.Width, g.GraphicsDevice.Viewport.Width), Color.White);
+            spriteBatch.Draw(tex, new Rectangle(0, 0, g.GraphicsDevice.Viewport.Width, g.GraphicsDevice.Viewport.Height), Color.White);
+            foreach(MenuObject i in menuObjects)
+            {
+                i.Draw(spriteBatch);
+            }
         }
 
         public virtual void Update()

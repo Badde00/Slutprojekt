@@ -10,11 +10,11 @@ namespace Slutprojekt
 {
     class T1U0 : Tower1
     {
-        public T1U0(Texture2D zTex, Vector2 zPos, Texture2D zProjectileTex, int? zDmgCaused)
+        public T1U0(Vector2 zPos, int? zDmgCaused)
         {
-            tex = zTex;
+            tex = Assets.T1U0;
             pos = zPos;
-            projectileTex = zProjectileTex;
+            projectileTex = Assets.T1Projectile;
 
             if (zDmgCaused == null)
                 zDmgCaused = 0;

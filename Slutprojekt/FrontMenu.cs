@@ -10,9 +10,9 @@ namespace Slutprojekt
 {
     class FrontMenu : BaseMenu
     {
-        public FrontMenu(Texture2D t, List<MenuObject> objects)
+        public FrontMenu(List<MenuObject> objects)
         {
-            tex = t;
+            tex = Assets.FrontMenuTex;
             menuObjects = objects;
         }
 

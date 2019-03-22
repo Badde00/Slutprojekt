@@ -56,20 +56,7 @@ namespace Slutprojekt
         SpriteBatch spriteBatch;
         private Vector2 position;
         private static Game1 game; //Försöker kopiera hur du gjorde en "singelton" (tror jag det hette)
-
-        private Texture2D bana1;
-        private Texture2D bana2;
-        private Texture2D t1U0;
-        private Texture2D t1U1;
-        private Texture2D t1U2;
-        private Texture2D t1U3;
-        private Texture2D t1Projectile;
-        private Texture2D t2U0;
-        private Texture2D t2U1;
-        private Texture2D t2U2;
-        private Texture2D t2U3;
-        private Texture2D t2Projectile;
-        private Texture2D frontMenuTex;
+        
         private int money;
         private int t1U0Cost;
         private int t2U0Cost;
@@ -143,19 +130,8 @@ namespace Slutprojekt
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            bana1 = Content.Load<Texture2D>("Bana1");
-            bana2 = Content.Load<Texture2D>("Bana2");
-            t1U0 = Content.Load<Texture2D>("T1U0");
-            t1U1 = Content.Load<Texture2D>("T1U1");
-            t1U2 = Content.Load<Texture2D>("T1U2");
-            t1U3 = Content.Load<Texture2D>("T1U3");
-            t1Projectile = Content.Load<Texture2D>("T1Projectile");
-            t2U0 = Content.Load<Texture2D>("T2U0");
-            t2U1 = Content.Load<Texture2D>("T2U1");
-            t2U2 = Content.Load<Texture2D>("T2U2");
-            t2U3 = Content.Load<Texture2D>("T2U3");
-            t2Projectile = Content.Load<Texture2D>("T2Projectile");
-            frontMenuTex = Content.Load<Texture2D>("Menu");
+            Assets.LoadContent(Content);
+            
         }
 
 
@@ -213,8 +189,8 @@ namespace Slutprojekt
             gameState = GameState.Menu;
             List<MenuObject> menuObjectsList = new List<MenuObject>();
 
-            menuObjectsList.Add(new MenuObjectButton(bana1, position,  new Rectangle(100, 100, 10, 10), StartLevel));
-            menu = new FrontMenu(frontMenuTex, menuObjectsList);
+            menuObjectsList.Add(new MenuObjectButton(Assets.Bana1, position,  new Rectangle(100, 100, 10, 10), StartLevel));
+            menu = new FrontMenu(menuObjectsList);
         }
 
         private void StartLevel()
@@ -254,13 +230,13 @@ namespace Slutprojekt
             if(s == SelectedTower.Tower1)
             {
                 money -= t1U0Cost;
-                unitsWhenPlaying.Add(new T1U0(t1U0, new Vector2(mouseState.Position.X, mouseState.Position.Y), t1Projectile, null));
+                unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
                 selectedTower = SelectedTower.Empty;
             }
             else if(s == SelectedTower.Tower2)
             {
                 money -= t2U0Cost;
-                unitsWhenPlaying.Add(new T2U0(t1U0, new Vector2(mouseState.Position.X, mouseState.Position.Y), t2Projectile));
+                unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
                 selectedTower = SelectedTower.Empty;
             }
         }
