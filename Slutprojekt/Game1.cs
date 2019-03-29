@@ -189,14 +189,15 @@ namespace Slutprojekt
             gameState = GameState.Menu;
             List<MenuObject> menuObjectsList = new List<MenuObject>();
 
-            menuObjectsList.Add(new MenuObjectButton(Assets.Bana1, position,  new Rectangle(100, 100, 10, 10), StartLevel));
+            menuObjectsList.Add(new MenuObjectText("Mitt Spel!", new Vector2((graphics.GraphicsDevice.Viewport.Width / 2) - 75, 75)));
+            menuObjectsList.Add(new MenuObjectButton(Assets.Bana1,  new Rectangle(200, 150, 100, 100), StartLevel));
             menu = new FrontMenu(menuObjectsList);
         }
 
         private void StartLevel()
         {
             gameState = GameState.Playing;
-
+            
         }
 
         private void PlayingUpdate()

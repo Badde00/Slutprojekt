@@ -11,7 +11,6 @@ namespace Slutprojekt
 {
     class MenuObjectButton : MenuObject
     {
-        private Vector2 mousePos;
         private MouseState previousState = Mouse.GetState();
         private MouseState state = Mouse.GetState();
         private Func func;
@@ -31,7 +30,7 @@ namespace Slutprojekt
         public override void Update()
         {
             state = Mouse.GetState();
-            if (hitbox.Contains(mousePos) && state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed)
+            if (hitbox.Contains(state.Position) && state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed)
             {
                 OnClick();
             }
@@ -46,9 +45,11 @@ namespace Slutprojekt
             func.Invoke();
         }
 
-        public MenuObjectButton(Texture2D t, Vector2 pos, Rectangle hitB, Func f)
+        public MenuObjectButton(Texture2D t, Rectangle hitB, Func f)
         {
             func = f;
+            tex = t;
+            hitbox = hitB;
         }
     }
 }

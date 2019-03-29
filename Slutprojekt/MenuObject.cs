@@ -35,7 +35,7 @@ namespace Slutprojekt
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tex, pos, Color.White);
+            spriteBatch.Draw(tex, hitbox, Color.White);
         }
 
         public virtual void Update() { }
