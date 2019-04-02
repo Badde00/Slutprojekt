@@ -20,7 +20,7 @@ namespace Slutprojekt
         Playing,
         Settings,
         Paused, 
-        Lost
+        Defeat
     }
 
     public enum MenuEnum //Startmeny knappar
@@ -57,13 +57,11 @@ namespace Slutprojekt
         private Vector2 position;
         private static Game1 game; //Försöker kopiera hur du gjorde en "singelton" (tror jag det hette)
         
-        private int money;
         private int t1U0Cost;
         private int t2U0Cost;
         private List<BaseUnit> unitsWhenPlaying;
         private FrontMenu menu;
-        private double time; 
-        private int life;
+        private double time;
         private GameState gameState;
         private SelectedTower selectedTower;
         MouseState mouseState;
@@ -71,6 +69,9 @@ namespace Slutprojekt
         KeyboardState keyboardState;
         KeyboardState previousKeyboardState;
         public delegate void EmptyTest2(int i);
+        private Vector2 loadButton; //Så om man vill flytta knappen så flyttas texten med
+        private Vector2 aboutButton;
+        private static Playing currentGame;
 
 
         public double Time
@@ -117,11 +118,10 @@ namespace Slutprojekt
             selectedTower = SelectedTower.Empty;
             previousMouseState = Mouse.GetState();
             previousKeyboardState = Keyboard.GetState();
-            money = 1000;
             t1U0Cost = 400;
             t2U0Cost = 650;
-            time = 0;
-            life = 100;
+            loadButton = new Vector2(135, 220);
+            aboutButton = new Vector2(425, 220);
 
 
             MakeStartMenu();
@@ -160,7 +160,7 @@ namespace Slutprojekt
             {
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     gameState = GameState.Paused;
-                PlayingUpdate();
+                currentGame.Update();
                 time += gameTime.ElapsedGameTime.TotalSeconds;
             }
             else //Settings
@@ -190,17 +190,38 @@ namespace Slutprojekt
             List<MenuObject> menuObjectsList = new List<MenuObject>();
 
             menuObjectsList.Add(new MenuObjectText("Mitt Spel!", new Vector2((graphics.GraphicsDevice.Viewport.Width / 2) - 75, 75)));
-            menuObjectsList.Add(new MenuObjectButton(Assets.Bana1,  new Rectangle(200, 150, 100, 100), StartLevel));
+            menuObjectsList.Add(new MenuObjectButton(Assets.Bana1, new Rectangle(200, 150, 100, 100), StartLevel1)); //Start lvl 1
+            menuObjectsList.Add(new MenuObjectButton(Assets.Bana2, new Rectangle(500, 150, 100, 100), StartLevel2)); //Start lvl 2
+            menuObjectsList.Add(new MenuObjectButton(Assets.Button, new Rectangle((int)loadButton.X, (int)loadButton.Y, 225, 225), LoadGame)); //Load game
+            menuObjectsList.Add(new MenuObjectText("Load Game", new Vector2(loadButton.X + 15, loadButton.Y + 90))); //Text över load
+            menuObjectsList.Add(new MenuObjectButton(Assets.Button, new Rectangle((int)aboutButton.X, (int)aboutButton.Y, 225, 225), OpenAbout)); //About
+            menuObjectsList.Add(new MenuObjectText("About", new Vector2(aboutButton.X + 15, aboutButton.Y + 90)));
+            menuObjectsList.Add(new MenuObjectButton(Assets.Bana1, new Rectangle(200, 150, 100, 100), Exit)); //Exit
             menu = new FrontMenu(menuObjectsList);
         }
 
-        private void StartLevel()
+        private void StartLevel1()
         {
             gameState = GameState.Playing;
-            
+
         }
 
-        private void PlayingUpdate()
+        private void StartLevel2()
+        {
+            gameState = GameState.Playing;
+        }
+
+        private void LoadGame() //Gör senare
+        {
+
+        }
+
+        private void OpenAbout() //Gör senare
+        {
+
+        }
+
+        private void PlayingUpdate() //Flytta till Playing update
         {
             foreach (BaseUnit u in unitsWhenPlaying)
                 u.Update();

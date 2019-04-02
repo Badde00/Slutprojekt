@@ -23,6 +23,7 @@ namespace Slutprojekt
         private static Texture2D t2U3;
         private static Texture2D t2Projectile;
         private static Texture2D frontMenuTex;
+        private static Texture2D button;
         private static SpriteFont text;
 
         public static void LoadContent(ContentManager content)
@@ -40,8 +41,11 @@ namespace Slutprojekt
             t2U3 = content.Load<Texture2D>("T2U3");
             t2Projectile = content.Load<Texture2D>("T2Projectile");
             frontMenuTex = content.Load<Texture2D>("Menu");
+            button = content.Load<Texture2D>("Button");
             text = content.Load<SpriteFont>("File");
         }
+
+        public static Texture2D Button { get { return button; } }
 
         public static SpriteFont Text
         {
