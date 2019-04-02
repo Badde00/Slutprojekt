@@ -56,7 +56,7 @@ namespace Slutprojekt
             if (time >= (1 / aps))
             {
                 time -= (1 / aps);
-                Game1.Game.UnitsWhenPlaying.Add(MakeProjectile());
+                Playing.UnitsWhenPlaying.Add(MakeProjectile());
             }
         }
 

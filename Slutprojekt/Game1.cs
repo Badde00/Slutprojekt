@@ -57,21 +57,17 @@ namespace Slutprojekt
         private Vector2 position;
         private static Game1 game; //Försöker kopiera hur du gjorde en "singelton" (tror jag det hette)
         
-        private int t1U0Cost;
-        private int t2U0Cost;
-        private List<BaseUnit> unitsWhenPlaying;
         private FrontMenu menu;
         private double time;
         private GameState gameState;
-        private SelectedTower selectedTower;
+        public SelectedTower selectedTower;
         MouseState mouseState;
         MouseState previousMouseState;
         KeyboardState keyboardState;
         KeyboardState previousKeyboardState;
-        public delegate void EmptyTest2(int i);
+        public delegate void EmptyTest2(int i); // Vet inte vad denna gör. Testa sen
         private Vector2 loadButton; //Så om man vill flytta knappen så flyttas texten med
         private Vector2 aboutButton;
-        private static Playing currentGame;
 
 
         public double Time
@@ -84,12 +80,6 @@ namespace Slutprojekt
         {
             get;
             private set;
-        }
-
-        public List<BaseUnit> UnitsWhenPlaying
-        {
-            get;
-            set;
         }
 
         public Game1()
@@ -114,12 +104,9 @@ namespace Slutprojekt
             base.Initialize();
             position = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
             this.IsMouseVisible = true;
-            unitsWhenPlaying = new List<BaseUnit>();
             selectedTower = SelectedTower.Empty;
             previousMouseState = Mouse.GetState();
             previousKeyboardState = Keyboard.GetState();
-            t1U0Cost = 400;
-            t2U0Cost = 650;
             loadButton = new Vector2(135, 220);
             aboutButton = new Vector2(425, 220);
 
@@ -160,7 +147,7 @@ namespace Slutprojekt
             {
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     gameState = GameState.Paused;
-                currentGame.Update();
+                Playing.Update();
                 time += gameTime.ElapsedGameTime.TotalSeconds;
             }
             else //Settings
@@ -195,8 +182,8 @@ namespace Slutprojekt
             menuObjectsList.Add(new MenuObjectButton(Assets.Button, new Rectangle((int)loadButton.X, (int)loadButton.Y, 225, 225), LoadGame)); //Load game
             menuObjectsList.Add(new MenuObjectText("Load Game", new Vector2(loadButton.X + 15, loadButton.Y + 90))); //Text över load
             menuObjectsList.Add(new MenuObjectButton(Assets.Button, new Rectangle((int)aboutButton.X, (int)aboutButton.Y, 225, 225), OpenAbout)); //About
-            menuObjectsList.Add(new MenuObjectText("About", new Vector2(aboutButton.X + 15, aboutButton.Y + 90)));
-            menuObjectsList.Add(new MenuObjectButton(Assets.Bana1, new Rectangle(200, 150, 100, 100), Exit)); //Exit
+            menuObjectsList.Add(new MenuObjectText("About", new Vector2(aboutButton.X + 50, aboutButton.Y + 90)));
+            menuObjectsList.Add(new MenuObjectButton(Assets.Exit, new Rectangle(graphics.GraphicsDevice.Viewport.Width - 100, 0, 100, 100), Exit)); //Exit
             menu = new FrontMenu(menuObjectsList);
         }
 
@@ -221,47 +208,7 @@ namespace Slutprojekt
 
         }
 
-        private void PlayingUpdate() //Flytta till Playing update
-        {
-            foreach (BaseUnit u in unitsWhenPlaying)
-                u.Update();
-
-            if (keyboardState.IsKeyUp(Keys.D1) && keyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost)
-            {
-                selectedTower = SelectedTower.Tower1;
-            }
-
-            if (keyboardState.IsKeyUp(Keys.D2) && keyboardState.IsKeyDown(Keys.D2) && money >= t2U0Cost)
-            {
-                selectedTower = SelectedTower.Tower2;
-            }
-
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower1) //Placera torn
-            {
-                PlaceTower(SelectedTower.Tower1);
-            }
-
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower2) //Placera torn
-            {
-                PlaceTower(SelectedTower.Tower2);
-            }
-        }
-
-        private void PlaceTower(SelectedTower s)
-        {
-            if(s == SelectedTower.Tower1)
-            {
-                money -= t1U0Cost;
-                unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
-                selectedTower = SelectedTower.Empty;
-            }
-            else if(s == SelectedTower.Tower2)
-            {
-                money -= t2U0Cost;
-                unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
-                selectedTower = SelectedTower.Empty;
-            }
-        }
+        
 
         private void Save()
         {
