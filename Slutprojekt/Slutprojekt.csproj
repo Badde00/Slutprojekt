@@ -50,6 +50,7 @@
     <Compile Include="MenuObject.cs" />
     <Compile Include="MenuObjectButton.cs" />
     <Compile Include="MenuObjectText.cs" />
+    <Compile Include="PartialMenu.cs" />
     <Compile Include="Playing.cs" />
     <Compile Include="T1U0.cs" />
     <Compile Include="Enemy1.cs" />

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,12 @@ namespace Slutprojekt
         private static KeyboardState previousKeyboardState = Keyboard.GetState();
         private static MouseState mouseState;
         private static MouseState previousMouseState = Mouse.GetState();
+        private static Texture2D tex;
+        private static GraphicsDeviceManager graphics;
+
+
+        private static List<Point> enemiesTurningPoints1 = new List<Point>(); //Vart fiender ska gå i bana 1 - Måste fixa
+        private static List<Point> enemiesTurningPoints2 = new List<Point>(); //Vart fiender ska gå i bana 2
 
         public static List<BaseUnit> UnitsWhenPlaying
         {
@@ -27,6 +34,22 @@ namespace Slutprojekt
             set;
         }
 
+        public static void StartPlaying(SelectedTrack s, GraphicsDeviceManager g)
+        {
+            graphics = g;
+            if(s == SelectedTrack.Level1)
+            {
+                tex = Assets.Bana1;
+            } else
+            {
+                tex = Assets.Bana2;
+            }
+        }
+
+        public static void ContiniuePlaying()
+        {
+
+        }
 
         public static void Update()
         {
@@ -70,12 +93,21 @@ namespace Slutprojekt
                 unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
                 Game1.Game.selectedTower = SelectedTower.Empty;
             }
-            else if (s == SelectedTower.Tower2)
+            else
             {
                 money -= t2U0Cost;
                 unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
                 Game1.Game.selectedTower = SelectedTower.Empty;
             }
+        }
+
+        public static void Draw(SpriteBatch spriteBatch)
+        {
+            foreach(BaseUnit u in unitsWhenPlaying)
+            {
+                u.Draw(spriteBatch);
+            }
+            spriteBatch.Draw(tex, new Rectangle(0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height), Color.White);
         }
     }
 }

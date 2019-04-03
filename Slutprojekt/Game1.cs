@@ -40,6 +40,12 @@ namespace Slutprojekt
         Tower2
     }
 
+    public enum SelectedTrack //Vilken bana som väljs
+    {
+        Level1,
+        Level2
+    }
+
     delegate void Func();
 
     /*För ev cirkel+collision, fråga tim först:
@@ -167,7 +173,13 @@ namespace Slutprojekt
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             base.Draw(gameTime);
-            menu.Draw(spriteBatch, graphics);
+            if (gameState == GameState.Menu)
+            {
+                menu.Draw(spriteBatch, graphics);
+            } else if(gameState == GameState.Playing)
+            {
+                Playing.Draw(spriteBatch);
+            }
             spriteBatch.End();
         }
 
@@ -184,18 +196,21 @@ namespace Slutprojekt
             menuObjectsList.Add(new MenuObjectButton(Assets.Button, new Rectangle((int)aboutButton.X, (int)aboutButton.Y, 225, 225), OpenAbout)); //About
             menuObjectsList.Add(new MenuObjectText("About", new Vector2(aboutButton.X + 50, aboutButton.Y + 90)));
             menuObjectsList.Add(new MenuObjectButton(Assets.Exit, new Rectangle(graphics.GraphicsDevice.Viewport.Width - 100, 0, 100, 100), Exit)); //Exit
+            menuObjectsList.Add(new MenuObjectButton(Assets.Settings, new Rectangle(graphics.GraphicsDevice.Viewport.Width - 100, 
+                graphics.GraphicsDevice.Viewport.Height - 100, 100, 100), OpenSettings)); //Settings
             menu = new FrontMenu(menuObjectsList);
         }
 
         private void StartLevel1()
         {
             gameState = GameState.Playing;
-
+            Playing.StartPlaying(SelectedTrack.Level1, graphics);
         }
 
         private void StartLevel2()
         {
             gameState = GameState.Playing;
+            Playing.StartPlaying(SelectedTrack.Level2, graphics);
         }
 
         private void LoadGame() //Gör senare
@@ -204,6 +219,11 @@ namespace Slutprojekt
         }
 
         private void OpenAbout() //Gör senare
+        {
+
+        }
+
+        private void OpenSettings() //Gör senare
         {
 
         }

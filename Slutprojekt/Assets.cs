@@ -26,6 +26,11 @@ namespace Slutprojekt
         private static Texture2D button;
         private static SpriteFont text;
         private static Texture2D exit;
+        private static Texture2D settings;
+        private static Texture2D blank; //Ifall jag bara vill ha en knapp
+        private static Texture2D enemy1;
+        private static Texture2D enemy2;
+        private static Texture2D enemy3;
 
         public static void LoadContent(ContentManager content)
         {
@@ -45,11 +50,26 @@ namespace Slutprojekt
             button = content.Load<Texture2D>("Button");
             text = content.Load<SpriteFont>("File");
             exit = content.Load<Texture2D>("Exit");
+            settings = content.Load<Texture2D>("Settings");
+            blank = content.Load<Texture2D>("Blank");
+            enemy1 = content.Load<Texture2D>("Enemy1");
+            enemy2 = content.Load<Texture2D>("Enemy2");
+            enemy3 = content.Load<Texture2D>("Enemy3");
         }
 
         public static Texture2D Button { get { return button; } }
 
         public static Texture2D Exit { get { return exit; } }
+
+        public static Texture2D Settings { get { return settings; } }
+        
+        public static Texture2D Blank { get { return blank; } }
+
+        public static Texture2D Enemy1 { get { return enemy1; } }
+
+        public static Texture2D Enemy2 { get { return enemy2; } }
+
+        public static Texture2D Enemy3 { get { return enemy3; } }
 
         public static SpriteFont Text
         {
@@ -81,9 +101,9 @@ namespace Slutprojekt
             get { return t1U2; }
         }      
                
-        public static Texture2D T1U3 //Måste fixa resten
+        public static Texture2D T1U3
         {      
-            get { return t1U1; }
+            get { return t1U3; }
         }      
                
         public static Texture2D T1Projectile
@@ -93,29 +113,27 @@ namespace Slutprojekt
                
         public static Texture2D T2U0
         {      
-            get { return t1U1; }
+            get { return t2U0; }
         }      
                
         public static Texture2D T2U1
         {
-            get { return t1U1; }
+            get { return t2U1; }
         }
 
         public static Texture2D T2U2
         {
-            get { return t1U1; }
+            get { return t2U2; }
         }
 
         public static Texture2D T2U3
         {
-            get;
-            private set;
+            get { return t2U3; }
         }
 
         public static Texture2D T2Projectile
         {
-            get;
-            private set;
+            get { return t2Projectile; }
         }
 
         public static Texture2D FrontMenuTex
