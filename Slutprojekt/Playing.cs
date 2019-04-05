@@ -25,8 +25,9 @@ namespace Slutprojekt
         private static GraphicsDeviceManager graphics;
 
 
-        private static List<Point> enemiesTurningPoints1 = new List<Point>(); //Vart fiender ska gå i bana 1 - Måste fixa
-        private static List<Point> enemiesTurningPoints2 = new List<Point>(); //Vart fiender ska gå i bana 2
+        private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1 - Måste fixa
+        private static List<Vector2> enemiesTurningPoints2 = new List<Vector2>(); //Vart fiender ska gå i bana 2
+        private static List<Vector2> tPoints;
 
         public static List<BaseUnit> UnitsWhenPlaying
         {
@@ -40,9 +41,11 @@ namespace Slutprojekt
             if(s == SelectedTrack.Level1)
             {
                 tex = Assets.Bana1;
+                tPoints = enemiesTurningPoints1;
             } else
             {
                 tex = Assets.Bana2;
+                tPoints = enemiesTurningPoints1;
             }
         }
 
@@ -55,6 +58,8 @@ namespace Slutprojekt
         {
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
+
+            //Måste på ngt sätt se om runa är aktiv och starta nya rundor. 
 
 
             foreach (BaseUnit u in unitsWhenPlaying)
@@ -100,6 +105,64 @@ namespace Slutprojekt
                 Game1.Game.selectedTower = SelectedTower.Empty;
             }
         }
+        
+        public static void StartRound()
+        {
+            round++;
+            if(round == 1)
+            {
+                SpawnEnemy1();
+
+            } else if(round == 2)
+            {
+
+            }
+            else if (round == 3)
+            {
+
+            }
+            else if (round == 4)
+            {
+
+            }
+            else if (round == 5)
+            {
+
+            }
+            else if (round == 6)
+            {
+
+            }
+            else if (round == 7)
+            {
+
+            }
+            else if (round == 8)
+            {
+
+            }
+            else if (round == 9)
+            {
+
+            }
+            else if (round == 10)
+            {
+
+            }
+            else if (round > 10)
+            {
+
+            }
+            else if (round < 1)
+            {
+
+            }
+        }
+
+        public static void SpawnEnemy1()
+        {
+            unitsWhenPlaying.Add(new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+        }
 
         public static void Draw(SpriteBatch spriteBatch)
         {
@@ -108,6 +171,13 @@ namespace Slutprojekt
                 u.Draw(spriteBatch);
             }
             spriteBatch.Draw(tex, new Rectangle(0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height), Color.White);
+        }
+
+
+        public static int Life
+        {
+            get;
+            set;
         }
     }
 }
