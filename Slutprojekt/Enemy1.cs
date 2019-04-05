@@ -35,6 +35,11 @@ namespace Slutprojekt
                 Playing.Life -= dmg;
                 isDead = true;
             }
+
+            if(hp <= 0)
+            {
+                isDead = true;
+            }
             
             //Kollar om enheten är inom 50 pixlar av nästa svängplats, så den inte missar den
             if (pos.X >= turningPoints[currentTurningPoint + 1].X - 25 && pos.Y >= turningPoints[currentTurningPoint + 1].Y -25 && 

@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 
 namespace Slutprojekt
 {
+    public enum ChosenE
+    {
+        e1,
+        e2
+    }
+
     static class Playing //Gjorde denna klass för att tömma på Game1. Allt spelande kommer att pågå i denna klass
     {
         private static int round = 0;
@@ -16,6 +22,7 @@ namespace Slutprojekt
         private static int money = 1000;
         private static int t1U0Cost = 450;
         private static int t2U0Cost = 600;
+        private static int enemyCount = 0;
         private static List<BaseUnit> unitsWhenPlaying = new List<BaseUnit>();
         private static KeyboardState keyboardState; //Gör separata keyboardstate från Game1 då det blir mindre att skriva och prestanda och effektiv programmering inte är det jag fokuserar på
         private static KeyboardState previousKeyboardState = Keyboard.GetState();
@@ -23,6 +30,15 @@ namespace Slutprojekt
         private static MouseState previousMouseState = Mouse.GetState();
         private static Texture2D tex;
         private static GraphicsDeviceManager graphics;
+        private static double spawnTime = 0;
+        private static GameTime gameTime = new GameTime();
+        private static List<BaseUnit> temp = new List<BaseUnit>();
+        private static List<double> spawnCd = new List<double>();
+        private static List<double> tempCd = new List<double>();
+        private static List<ChosenE> chosenEs = new List<ChosenE>();
+        private static bool roundActive = false;
+        private static List<MenuObject> menuTemp = new List<MenuObject>();
+        private static PartialMenu nextRoundButton;
 
 
         private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1 - Måste fixa
@@ -47,11 +63,12 @@ namespace Slutprojekt
                 tex = Assets.Bana2;
                 tPoints = enemiesTurningPoints1;
             }
+            menuTemp.Add(new MenuObjectButton(Assets.Button, new Rectangle()))
         }
 
         public static void ContiniuePlaying()
         {
-
+            nextRoundButton.Update();
         }
 
         public static void Update()
@@ -59,7 +76,30 @@ namespace Slutprojekt
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
 
-            //Måste på ngt sätt se om runa är aktiv och starta nya rundor. 
+            if (unitsWhenPlaying.Count > 0)
+            {
+                foreach (BaseUnit u in unitsWhenPlaying) //Rensar min units lista från döda fiender.
+                {
+                    if (u is BaseEnemy)
+                    {
+                        if ((u as BaseEnemy).IsDead != true)
+                        {
+                            temp.Add(u);
+                        }
+                    }
+                    else
+                    {
+                        temp.Add(u);
+                    }
+                }
+                unitsWhenPlaying = temp;
+                temp = null;
+            }
+
+            if(!roundActive)
+            {
+
+            }
 
 
             foreach (BaseUnit u in unitsWhenPlaying)
@@ -109,11 +149,17 @@ namespace Slutprojekt
         public static void StartRound()
         {
             round++;
+            spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
             if(round == 1)
             {
-                SpawnEnemy1();
-
-            } else if(round == 2)
+                AddEnemy(0, ChosenE.e1);
+                AddEnemy(2, ChosenE.e1);
+                AddEnemy(3, ChosenE.e1);
+                AddEnemy(1, ChosenE.e1);
+                AddEnemy(1, ChosenE.e1);
+                SpawnEnemy();
+            }
+            else if(round == 2)
             {
 
             }
@@ -159,9 +205,33 @@ namespace Slutprojekt
             }
         }
 
-        public static void SpawnEnemy1()
+        public static void AddEnemy(double t, ChosenE e)
         {
-            unitsWhenPlaying.Add(new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            spawnCd.Add(t);
+            chosenEs.Add(e);
+        }
+
+        public static void SpawnEnemy()
+        {
+            if (spawnTime >= spawnCd[0])
+            {
+                for (int i = 1; i < spawnCd.Count - 2; i++)
+                {
+                    tempCd.Add(spawnCd[i]);
+                }
+                spawnCd = tempCd;
+                tempCd = null;
+
+                if(chosenEs[chosenEs.Count - spawnCd.Count - 1] == ChosenE.e1)
+                {
+                    enemyCount++;
+                    unitsWhenPlaying.Add(new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                } else
+                {
+                    enemyCount++;
+                    unitsWhenPlaying.Add(new Enemy2());
+                }
+            }
         }
 
         public static void Draw(SpriteBatch spriteBatch)

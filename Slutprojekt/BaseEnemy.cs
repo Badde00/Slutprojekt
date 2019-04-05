@@ -31,6 +31,12 @@ namespace Slutprojekt
             set;
         }
 
+        public bool IsDead
+        {
+            get;
+            private set;
+        }
+
         public int MaxHp
         {
             get;
