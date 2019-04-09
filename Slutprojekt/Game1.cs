@@ -54,10 +54,6 @@ namespace Slutprojekt
 
     public class Game1 : Game 
     {
-        /*KOM IHÅG:
-         * Gör rektanglar i TxU0
-         */
-
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         private Vector2 position;

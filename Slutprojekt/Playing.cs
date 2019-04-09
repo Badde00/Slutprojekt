@@ -17,6 +17,18 @@ namespace Slutprojekt
 
     static class Playing //Gjorde denna klass för att tömma på Game1. Allt spelande kommer att pågå i denna klass
     {
+        struct EnemySpawner
+        {
+            public BaseEnemy enemyToSpawn;
+            public double time;
+
+            public EnemySpawner(BaseEnemy enemyType, double spawnTime)
+            {
+                enemyToSpawn = enemyType;
+                time = spawnTime;
+            }
+        }
+
         private static int round = 0;
         private static int life = 100;
         private static int money = 1000;
@@ -39,6 +51,8 @@ namespace Slutprojekt
         private static bool roundActive = false;
         private static List<MenuObject> menuTemp = new List<MenuObject>();
         private static PartialMenu nextRoundButton;
+        private static List<PartialMenu> menuList = new List<PartialMenu>();
+        private static Queue<EnemySpawner> enemySpawners = new Queue<EnemySpawner>();
 
 
         private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1 - Måste fixa
@@ -63,7 +77,8 @@ namespace Slutprojekt
                 tex = Assets.Bana2;
                 tPoints = enemiesTurningPoints1;
             }
-            menuTemp.Add(new MenuObjectButton(Assets.Button, new Rectangle()))
+            menuTemp.Add(new MenuObjectButton(Assets.Button, new Rectangle(graphics.GraphicsDevice.Viewport.Width - 100, graphics.GraphicsDevice.Viewport.Height - 100, 100, 50), StartRound));
+            menuList.Add(nextRoundButton = new PartialMenu(menuTemp, Assets.Blank));
         }
 
         public static void ContiniuePlaying()
@@ -76,6 +91,7 @@ namespace Slutprojekt
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
 
+            spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
             if (unitsWhenPlaying.Count > 0)
             {
                 foreach (BaseUnit u in unitsWhenPlaying) //Rensar min units lista från döda fiender.
@@ -98,7 +114,7 @@ namespace Slutprojekt
 
             if(!roundActive)
             {
-
+                foreach(PartialMenu p in menuList) { p.Update(); }
             }
 
 
@@ -152,11 +168,10 @@ namespace Slutprojekt
             spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
             if(round == 1)
             {
-                AddEnemy(0, ChosenE.e1);
-                AddEnemy(2, ChosenE.e1);
-                AddEnemy(3, ChosenE.e1);
-                AddEnemy(1, ChosenE.e1);
-                AddEnemy(1, ChosenE.e1);
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
                 SpawnEnemy();
             }
             else if(round == 2)
@@ -205,15 +220,22 @@ namespace Slutprojekt
             }
         }
 
-        public static void AddEnemy(double t, ChosenE e)
+        public static void AddEnemy(double t, BaseEnemy e)
         {
-            spawnCd.Add(t);
-            chosenEs.Add(e);
+            enemySpawners.Enqueue(new EnemySpawner(e, t));
         }
 
         public static void SpawnEnemy()
         {
-            if (spawnTime >= spawnCd[0])
+            if(spawnTime >= enemySpawners.Peek().time)
+            {
+                spawnTime = 0;
+                unitsWhenPlaying.Add(enemySpawners.Dequeue().enemyToSpawn);
+                enemyCount++;
+            }
+            
+            
+            /*if (spawnTime >= spawnCd[0])
             {
                 for (int i = 1; i < spawnCd.Count - 2; i++)
                 {
@@ -231,7 +253,7 @@ namespace Slutprojekt
                     enemyCount++;
                     unitsWhenPlaying.Add(new Enemy2());
                 }
-            }
+            }*/
         }
 
         public static void Draw(SpriteBatch spriteBatch)
@@ -241,6 +263,8 @@ namespace Slutprojekt
                 u.Draw(spriteBatch);
             }
             spriteBatch.Draw(tex, new Rectangle(0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height), Color.White);
+            foreach (PartialMenu p in menuList)
+            { p.Draw(spriteBatch, graphics); }
         }
 
 
