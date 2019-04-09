@@ -15,6 +15,21 @@ namespace Slutprojekt
         e2
     }
 
+    public enum PlayingState
+    {
+        start,
+        playing,
+        ended,
+        other
+    }
+
+    public enum SelectedTower //När du placerar torn, så kommer du att välja ett och då ändras denna
+    {
+        Empty,
+        Tower1,
+        Tower2
+    }
+
     static class Playing //Gjorde denna klass för att tömma på Game1. Allt spelande kommer att pågå i denna klass
     {
         struct EnemySpawner
@@ -48,11 +63,11 @@ namespace Slutprojekt
         private static List<double> spawnCd = new List<double>();
         private static List<double> tempCd = new List<double>();
         private static List<ChosenE> chosenEs = new List<ChosenE>();
-        private static bool roundActive = false;
-        private static List<MenuObject> menuTemp = new List<MenuObject>();
-        private static PartialMenu nextRoundButton;
         private static List<PartialMenu> menuList = new List<PartialMenu>();
         private static Queue<EnemySpawner> enemySpawners = new Queue<EnemySpawner>();
+        private static PlayingState pState = new PlayingState();
+
+        private static List<MenuObject> tempList = new List<MenuObject>();
 
 
         private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1 - Måste fixa
@@ -68,6 +83,7 @@ namespace Slutprojekt
         public static void StartPlaying(SelectedTrack s, GraphicsDeviceManager g)
         {
             graphics = g;
+            pState = PlayingState.start;
             if(s == SelectedTrack.Level1)
             {
                 tex = Assets.Bana1;
@@ -77,13 +93,15 @@ namespace Slutprojekt
                 tex = Assets.Bana2;
                 tPoints = enemiesTurningPoints1;
             }
-            menuTemp.Add(new MenuObjectButton(Assets.Button, new Rectangle(graphics.GraphicsDevice.Viewport.Width - 100, graphics.GraphicsDevice.Viewport.Height - 100, 100, 50), StartRound));
-            menuList.Add(nextRoundButton = new PartialMenu(menuTemp, Assets.Blank));
+
+
+            menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank)); //Funkar inte då listan och texturen är blank när man fortsätter
+            MakeNTurnButton();
         }
 
         public static void ContiniuePlaying()
         {
-            nextRoundButton.Update();
+
         }
 
         public static void Update()
@@ -91,16 +109,152 @@ namespace Slutprojekt
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
 
+
+            RemoveDead();
+
+            PlaceTowers();
+
             spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if(enemySpawners.Count > 0)
+                SpawnEnemy();
+
+            foreach(PartialMenu p in menuList)
+                p.Update();
+
+            foreach (BaseUnit u in unitsWhenPlaying)
+                u.Update();
+
+
+            previousMouseState = Mouse.GetState();
+            previousKeyboardState = Keyboard.GetState();
+        }
+        
+        public static void StartRound()
+        {
+            round++;
+            pState = PlayingState.playing;
+            for (int i = 0; i <= menuList[0].MenuObjects.Count; i++)
+            {
+                if (menuList[0].MenuObjects[i] is MenuObjectButton) {
+                    if ((menuList[0].MenuObjects[i] as MenuObjectButton).Id == 123)
+                    {
+                        menuList[0].MenuObjects.RemoveAt(i);
+                    }
+                }
+            }
+
+
+            if(round == 1)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if(round == 2)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round == 3)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round == 4)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round == 5)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round == 6)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round == 7)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round == 8)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round == 9)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round == 10)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round > 10)
+            {
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+            }
+            else if (round < 1)
+            {
+                Game1.Game.Exit();
+            }
+        }
+
+        public static void AddEnemy(double t, BaseEnemy e)
+        {
+            enemySpawners.Enqueue(new EnemySpawner(e, t));
+        }
+
+        public static void SpawnEnemy()
+        {
+            if(spawnTime >= enemySpawners.Peek().time && enemySpawners.Count > 0)
+            {
+                spawnTime = 0;
+                unitsWhenPlaying.Add(enemySpawners.Dequeue().enemyToSpawn);
+                enemyCount++;
+            }
+        }
+
+        public static void RemoveDead()
+        {
             if (unitsWhenPlaying.Count > 0)
             {
                 foreach (BaseUnit u in unitsWhenPlaying) //Rensar min units lista från döda fiender.
                 {
                     if (u is BaseEnemy)
                     {
-                        if ((u as BaseEnemy).IsDead != true)
+                        if (!(u as BaseEnemy).IsDead)
                         {
                             temp.Add(u);
+                            enemyCount--;
                         }
                     }
                     else
@@ -110,17 +264,13 @@ namespace Slutprojekt
                 }
                 unitsWhenPlaying = temp;
                 temp = null;
+
+                EndTurn();
             }
+        }
 
-            if(!roundActive)
-            {
-                foreach(PartialMenu p in menuList) { p.Update(); }
-            }
-
-
-            foreach (BaseUnit u in unitsWhenPlaying)
-                u.Update();
-
+        public static void PlaceTowers()
+        {
             if (keyboardState.IsKeyUp(Keys.D1) && keyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost)
             {
                 Game1.Game.selectedTower = SelectedTower.Tower1;
@@ -133,127 +283,24 @@ namespace Slutprojekt
 
             if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && Game1.Game.selectedTower == SelectedTower.Tower1) //Placera torn
             {
-                PlaceTower(SelectedTower.Tower1);
-            }
-
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && Game1.Game.selectedTower == SelectedTower.Tower2) //Placera torn
-            {
-                PlaceTower(SelectedTower.Tower2);
-            }
-
-
-            previousMouseState = Mouse.GetState();
-            previousKeyboardState = Keyboard.GetState();
-        }
-
-        public static void PlaceTower(SelectedTower s)
-        {
-            if (s == SelectedTower.Tower1)
-            {
                 money -= t1U0Cost;
                 unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
                 Game1.Game.selectedTower = SelectedTower.Empty;
             }
-            else
+
+            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && Game1.Game.selectedTower == SelectedTower.Tower2) //Placera torn
             {
                 money -= t2U0Cost;
                 unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
                 Game1.Game.selectedTower = SelectedTower.Empty;
             }
         }
-        
-        public static void StartRound()
+
+        public static void EndTurn()
         {
-            round++;
-            spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
-            if(round == 1)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                SpawnEnemy();
-            }
-            else if(round == 2)
-            {
-
-            }
-            else if (round == 3)
-            {
-
-            }
-            else if (round == 4)
-            {
-
-            }
-            else if (round == 5)
-            {
-
-            }
-            else if (round == 6)
-            {
-
-            }
-            else if (round == 7)
-            {
-
-            }
-            else if (round == 8)
-            {
-
-            }
-            else if (round == 9)
-            {
-
-            }
-            else if (round == 10)
-            {
-
-            }
-            else if (round > 10)
-            {
-
-            }
-            else if (round < 1)
-            {
-
-            }
-        }
-
-        public static void AddEnemy(double t, BaseEnemy e)
-        {
-            enemySpawners.Enqueue(new EnemySpawner(e, t));
-        }
-
-        public static void SpawnEnemy()
-        {
-            if(spawnTime >= enemySpawners.Peek().time)
-            {
-                spawnTime = 0;
-                unitsWhenPlaying.Add(enemySpawners.Dequeue().enemyToSpawn);
-                enemyCount++;
-            }
-            
-            
-            /*if (spawnTime >= spawnCd[0])
-            {
-                for (int i = 1; i < spawnCd.Count - 2; i++)
-                {
-                    tempCd.Add(spawnCd[i]);
-                }
-                spawnCd = tempCd;
-                tempCd = null;
-
-                if(chosenEs[chosenEs.Count - spawnCd.Count - 1] == ChosenE.e1)
-                {
-                    enemyCount++;
-                    unitsWhenPlaying.Add(new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                } else
-                {
-                    enemyCount++;
-                    unitsWhenPlaying.Add(new Enemy2());
-                }
-            }*/
+            if (enemyCount <= 0) { pState = PlayingState.ended; }
+            MakeNTurnButton();
+            money += 100 + round * round * 10;
         }
 
         public static void Draw(SpriteBatch spriteBatch)
@@ -263,8 +310,16 @@ namespace Slutprojekt
                 u.Draw(spriteBatch);
             }
             spriteBatch.Draw(tex, new Rectangle(0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height), Color.White);
+
             foreach (PartialMenu p in menuList)
             { p.Draw(spriteBatch, graphics); }
+        }
+
+        public static void MakeNTurnButton()
+        {
+            menuList[0].MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(
+                graphics.GraphicsDevice.Viewport.Width - 265, graphics.GraphicsDevice.Viewport.Height - 152, 230, 150), StartRound, 123));
+            menuList[0].MenuObjects.Add(new MenuObjectText("Next Round", new Vector2(graphics.GraphicsDevice.Viewport.Width - 250, graphics.GraphicsDevice.Viewport.Height - 100)));
         }
 
 

@@ -14,6 +14,7 @@ namespace Slutprojekt
         private MouseState previousState = Mouse.GetState();
         private MouseState state = Mouse.GetState();
         private Func func;
+        private int id;
 
         public Vector2 MousePos
         {
@@ -27,9 +28,16 @@ namespace Slutprojekt
             private set;
         }
 
+        public int Id
+        {
+            get;
+            private set;
+        }
+
         public override void Update()
         {
             state = Mouse.GetState();
+
             if (hitbox.Contains(state.Position) && state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed)
             {
                 OnClick();
@@ -50,6 +58,14 @@ namespace Slutprojekt
             func = f;
             tex = t;
             hitbox = hitB;
+        }
+
+        public MenuObjectButton(Texture2D t, Rectangle hitB, Func f, int iD)
+        {
+            func = f;
+            tex = t;
+            hitbox = hitB;
+            id = iD;
         }
     }
 }

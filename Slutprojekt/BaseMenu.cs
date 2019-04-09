@@ -20,6 +20,12 @@ namespace Slutprojekt
             private set;
         }
 
+        public List<MenuObject> MenuObjects
+        {
+            get;
+            set;
+        }
+
         public virtual void Draw(SpriteBatch spriteBatch, GraphicsDeviceManager g)
         {
             spriteBatch.Draw(tex, new Rectangle(0, 0, g.GraphicsDevice.Viewport.Width, g.GraphicsDevice.Viewport.Height), Color.White);

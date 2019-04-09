@@ -33,13 +33,6 @@ namespace Slutprojekt
         Exit
     }
 
-    public enum SelectedTower //När du placerar torn, så kommer du att välja ett och då ändras denna
-    {
-        Empty,
-        Tower1,
-        Tower2
-    }
-
     public enum SelectedTrack //Vilken bana som väljs
     {
         Level1,
