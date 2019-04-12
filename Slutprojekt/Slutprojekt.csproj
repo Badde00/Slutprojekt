@@ -46,6 +46,7 @@
     <Compile Include="BaseMenu.cs" />
     <Compile Include="BaseTower.cs" />
     <Compile Include="BaseUnit.cs" />
+    <Compile Include="Circle.cs" />
     <Compile Include="FrontMenu.cs" />
     <Compile Include="MenuObject.cs" />
     <Compile Include="MenuObjectButton.cs" />

@@ -100,8 +100,6 @@ namespace Slutprojekt
             position = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
             this.IsMouseVisible = true;
             selectedTower = SelectedTower.Empty;
-            previousMouseState = Mouse.GetState();
-            previousKeyboardState = Keyboard.GetState();
             loadButton = new Vector2(135, 220);
             aboutButton = new Vector2(425, 220);
 
@@ -151,8 +149,8 @@ namespace Slutprojekt
                     gameState = GameState.Menu;
             }
 
-            previousKeyboardState = Keyboard.GetState();
-            previousMouseState = Mouse.GetState();
+            previousKeyboardState = keyboardState;
+            previousMouseState =mouseState;
             base.Update(gameTime);
         }
 
@@ -168,6 +166,7 @@ namespace Slutprojekt
             } else if(gameState == GameState.Playing)
             {
                 Playing.Draw(spriteBatch);
+                spriteBatch.DrawString(Assets.Text, Mouse.GetState().Position.ToString(), new Vector2(10, 10), Color.Black);
             }
             spriteBatch.End();
         }

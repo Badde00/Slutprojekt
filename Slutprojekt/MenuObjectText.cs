@@ -11,7 +11,6 @@ namespace Slutprojekt
     class MenuObjectText : MenuObject
     {
         private string text;
-        private SpriteFont spriteFont;
 
         public string Text
         {
@@ -23,6 +22,13 @@ namespace Slutprojekt
         {
             text = t;
             pos = position;
+        }
+
+        public MenuObjectText(string t, Vector2 position, int iD)
+        {
+            text = t;
+            pos = position;
+            id = iD;
         }
 
         public override void Update()

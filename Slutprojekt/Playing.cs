@@ -54,7 +54,7 @@ namespace Slutprojekt
         private static KeyboardState keyboardState; //Gör separata keyboardstate från Game1 då det blir mindre att skriva och prestanda och effektiv programmering inte är det jag fokuserar på
         private static KeyboardState previousKeyboardState = Keyboard.GetState();
         private static MouseState mouseState;
-        private static MouseState previousMouseState = Mouse.GetState();
+        private static MouseState previousMouseState;
         private static Texture2D tex;
         private static GraphicsDeviceManager graphics;
         private static double spawnTime = 0;
@@ -94,7 +94,6 @@ namespace Slutprojekt
                 tPoints = enemiesTurningPoints1;
             }
 
-
             menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank)); //Funkar inte då listan och texturen är blank när man fortsätter
             MakeNTurnButton();
         }
@@ -126,8 +125,8 @@ namespace Slutprojekt
                 u.Update();
 
 
-            previousMouseState = Mouse.GetState();
-            previousKeyboardState = Keyboard.GetState();
+            previousMouseState = mouseState;
+            previousKeyboardState = keyboardState;
         }
         
         public static void StartRound()
@@ -144,87 +143,90 @@ namespace Slutprojekt
                 }
             }
 
-
-            if(round == 1)
+            //Innehåller det som ska spawnas under rundor, if(round==1) etc. Jag gjorde if(true) så jag kan förminska allt.
+            if (true)
             {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if(round == 2)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round == 3)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round == 4)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round == 5)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round == 6)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round == 7)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round == 8)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round == 9)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round == 10)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round > 10)
-            {
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-            }
-            else if (round < 1)
-            {
-                Game1.Game.Exit();
+                if (round == 1)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 2)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 3)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 4)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 5)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 6)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 7)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 8)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 9)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round == 10)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round > 10)
+                {
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                }
+                else if (round < 1)
+                {
+                    Game1.Game.Exit();
+                }
             }
         }
 
@@ -319,7 +321,7 @@ namespace Slutprojekt
         {
             menuList[0].MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(
                 graphics.GraphicsDevice.Viewport.Width - 265, graphics.GraphicsDevice.Viewport.Height - 152, 230, 150), StartRound, 123));
-            menuList[0].MenuObjects.Add(new MenuObjectText("Next Round", new Vector2(graphics.GraphicsDevice.Viewport.Width - 250, graphics.GraphicsDevice.Viewport.Height - 100)));
+            menuList[0].MenuObjects.Add(new MenuObjectText("Next Round", new Vector2(graphics.GraphicsDevice.Viewport.Width - 250, graphics.GraphicsDevice.Viewport.Height - 100), 123));
         }
 
 

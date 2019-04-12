@@ -11,10 +11,9 @@ namespace Slutprojekt
 {
     class MenuObjectButton : MenuObject
     {
-        private MouseState previousState = Mouse.GetState();
-        private MouseState state = Mouse.GetState();
+        private MouseState previousState;
+        private MouseState state;
         private Func func;
-        private int id;
 
         public Vector2 MousePos
         {
@@ -28,23 +27,32 @@ namespace Slutprojekt
             private set;
         }
 
-        public int Id
-        {
-            get;
-            private set;
-        }
+        
 
         public override void Update()
         {
             state = Mouse.GetState();
 
-            if (hitbox.Contains(state.Position) && state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed)
+            /*if (hitbox.Contains(state.Position) && state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed)
             {
                 OnClick();
+            }*/
+
+            
+            if(hitbox.Contains(state.Position))
+            {
+               if(previousState.LeftButton == ButtonState.Pressed)
+               {
+                   if(state.LeftButton == ButtonState.Released)
+                   {
+                        OnClick();
+                   }
+               }
             }
+            
 
 
-            previousState = Mouse.GetState();
+            previousState = state;
         }
 
 

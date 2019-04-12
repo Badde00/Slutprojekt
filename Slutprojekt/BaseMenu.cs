@@ -22,8 +22,8 @@ namespace Slutprojekt
 
         public List<MenuObject> MenuObjects
         {
-            get;
-            set;
+            get { return menuObjects; }
+            set { menuObjects = value; }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch, GraphicsDeviceManager g)

@@ -13,6 +13,7 @@ namespace Slutprojekt
         protected Texture2D tex;
         protected Vector2 pos;
         protected Rectangle hitbox;
+        protected int id; //Om jag vill identifiera ett specifikt objekt
 
 
         public Texture2D Tex
@@ -28,6 +29,12 @@ namespace Slutprojekt
         }
 
         public Rectangle Hitbox
+        {
+            get;
+            private set;
+        }
+
+        public int Id
         {
             get;
             private set;
