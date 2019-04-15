@@ -16,8 +16,8 @@ namespace Slutprojekt
 
         public Texture2D Tex
         {
-            get;
-            private set;
+            get { return tex; }
+            private set { tex = value; }
         }
 
         public List<MenuObject> MenuObjects

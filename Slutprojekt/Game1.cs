@@ -63,6 +63,7 @@ namespace Slutprojekt
         public delegate void EmptyTest2(int i); // Vet inte vad denna gör. Testa sen
         private Vector2 loadButton; //Så om man vill flytta knappen så flyttas texten med
         private Vector2 aboutButton;
+        private List<MenuObject> menuObjectsList;
 
 
         public double Time
@@ -102,6 +103,7 @@ namespace Slutprojekt
             selectedTower = SelectedTower.Empty;
             loadButton = new Vector2(135, 220);
             aboutButton = new Vector2(425, 220);
+            menuObjectsList = new List<MenuObject>();
 
 
             MakeStartMenu();
@@ -125,29 +127,7 @@ namespace Slutprojekt
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
 
-            if (gameState == GameState.Menu)
-            {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    Exit();
-                menu.Update();
-            }else 
-            if(gameState == GameState.Paused)
-            {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    gameState = GameState.Playing;
-            } else 
-            if(gameState == GameState.Playing)
-            {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    gameState = GameState.Paused;
-                Playing.Update();
-                time += gameTime.ElapsedGameTime.TotalSeconds;
-            }
-            else //Settings
-            {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    gameState = GameState.Menu;
-            }
+            GameStateUpdate(gameTime); //Updaterar bara det som behövs
 
             previousKeyboardState = keyboardState;
             previousMouseState =mouseState;
@@ -174,7 +154,6 @@ namespace Slutprojekt
         private void MakeStartMenu() //Inte klar. Måste fixa knappar först
         {
             gameState = GameState.Menu;
-            List<MenuObject> menuObjectsList = new List<MenuObject>();
 
             menuObjectsList.Add(new MenuObjectText("Mitt Spel!", new Vector2((graphics.GraphicsDevice.Viewport.Width / 2) - 75, 75)));
             menuObjectsList.Add(new MenuObjectButton(Assets.Bana1, new Rectangle(200, 150, 100, 100), StartLevel1)); //Start lvl 1
@@ -187,6 +166,35 @@ namespace Slutprojekt
             menuObjectsList.Add(new MenuObjectButton(Assets.Settings, new Rectangle(graphics.GraphicsDevice.Viewport.Width - 100, 
                 graphics.GraphicsDevice.Viewport.Height - 100, 100, 100), OpenSettings)); //Settings
             menu = new FrontMenu(menuObjectsList);
+        }
+
+        private void GameStateUpdate(GameTime gameTime)
+        {
+            if (gameState == GameState.Menu)
+            {
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    Exit();
+                menu.Update();
+            }
+            else
+            if (gameState == GameState.Paused)
+            {
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    gameState = GameState.Playing;
+            }
+            else
+            if (gameState == GameState.Playing)
+            {
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    gameState = GameState.Paused;
+                Playing.Update();
+                time += gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else //Settings
+            {
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    gameState = GameState.Menu;
+            }
         }
 
         private void StartLevel1()

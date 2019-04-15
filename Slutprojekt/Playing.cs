@@ -50,6 +50,7 @@ namespace Slutprojekt
         private static int t1U0Cost = 450;
         private static int t2U0Cost = 600;
         private static int enemyCount = 0;
+        private static bool firstESpawned = false; //Eftersom jag avslutar rundan när det inte finns fiender så använder jag även denna för att kolla att jag inte avslutar innan första fienden
         private static List<BaseUnit> unitsWhenPlaying = new List<BaseUnit>();
         private static KeyboardState keyboardState; //Gör separata keyboardstate från Game1 då det blir mindre att skriva och prestanda och effektiv programmering inte är det jag fokuserar på
         private static KeyboardState previousKeyboardState = Keyboard.GetState();
@@ -70,7 +71,7 @@ namespace Slutprojekt
         private static List<MenuObject> tempList = new List<MenuObject>();
 
 
-        private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1 - Måste fixa
+        private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1
         private static List<Vector2> enemiesTurningPoints2 = new List<Vector2>(); //Vart fiender ska gå i bana 2
         private static List<Vector2> tPoints;
 
@@ -94,8 +95,9 @@ namespace Slutprojekt
                 tPoints = enemiesTurningPoints1;
             }
 
-            menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank)); //Funkar inte då listan och texturen är blank när man fortsätter
+            menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank));
             MakeNTurnButton();
+            MakeETP();
         }
 
         public static void ContiniuePlaying()
@@ -108,21 +110,35 @@ namespace Slutprojekt
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
 
+            if(pState == PlayingState.playing)
+            {
+                RemoveDead();
 
-            RemoveDead();
+                spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (spawnTime >= enemySpawners.Peek().time)
+                {
+                    if (enemySpawners.Count > 0)
+                        SpawnEnemy();
+                }
+            }
 
             PlaceTowers();
-
-            spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
-
-            if(enemySpawners.Count > 0)
-                SpawnEnemy();
 
             foreach(PartialMenu p in menuList)
                 p.Update();
 
             foreach (BaseUnit u in unitsWhenPlaying)
                 u.Update();
+
+
+
+            //Temporärt, till jag eller Tim fixar StartButton-bug
+            if(keyboardState.IsKeyUp(Keys.U) && previousKeyboardState.IsKeyDown(Keys.U))
+            {
+                StartRound();
+            }
+
 
 
             previousMouseState = mouseState;
@@ -133,9 +149,10 @@ namespace Slutprojekt
         {
             round++;
             pState = PlayingState.playing;
-            for (int i = 0; i <= menuList[0].MenuObjects.Count; i++)
+            for (int i = 0; i <= menuList[0].MenuObjects.Count - 1; i++)
             {
-                if (menuList[0].MenuObjects[i] is MenuObjectButton) {
+                if (menuList[0].MenuObjects[i] is MenuObjectButton)
+                {
                     if ((menuList[0].MenuObjects[i] as MenuObjectButton).Id == 123)
                     {
                         menuList[0].MenuObjects.RemoveAt(i);
@@ -148,24 +165,24 @@ namespace Slutprojekt
             {
                 if (round == 1)
                 {
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(2, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
                 }
                 else if (round == 2)
                 {
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(2, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(3, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
                     AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
                 }
                 else if (round == 3)
                 {
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
-                    AddEnemy(0, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(2, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
+                    AddEnemy(2, new Enemy1(round, Assets.Enemy1, new Rectangle((int)tPoints[0].X, (int)tPoints[0].Y, 50, 50), tPoints));
                 }
                 else if (round == 4)
                 {
@@ -237,12 +254,11 @@ namespace Slutprojekt
 
         public static void SpawnEnemy()
         {
-            if(spawnTime >= enemySpawners.Peek().time && enemySpawners.Count > 0)
-            {
-                spawnTime = 0;
-                unitsWhenPlaying.Add(enemySpawners.Dequeue().enemyToSpawn);
-                enemyCount++;
-            }
+            spawnTime = 0;
+            if (!firstESpawned)
+                firstESpawned = true;
+            unitsWhenPlaying.Add(enemySpawners.Dequeue().enemyToSpawn);
+            enemyCount++;
         }
 
         public static void RemoveDead()
@@ -255,7 +271,7 @@ namespace Slutprojekt
                     {
                         if (!(u as BaseEnemy).IsDead)
                         {
-                            temp.Add(u);
+                            temp.Add(u); //temp är listan av det jag ska behålla. 
                             enemyCount--;
                         }
                     }
@@ -266,9 +282,10 @@ namespace Slutprojekt
                 }
                 unitsWhenPlaying = temp;
                 temp = null;
-
-                EndTurn();
             }
+
+            if (enemyCount == 0 && firstESpawned)
+                EndTurn();
         }
 
         public static void PlaceTowers()
@@ -300,7 +317,8 @@ namespace Slutprojekt
 
         public static void EndTurn()
         {
-            if (enemyCount <= 0) { pState = PlayingState.ended; }
+            pState = PlayingState.ended;
+            firstESpawned = false;
             MakeNTurnButton();
             money += 100 + round * round * 10;
         }
@@ -322,6 +340,30 @@ namespace Slutprojekt
             menuList[0].MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(
                 graphics.GraphicsDevice.Viewport.Width - 265, graphics.GraphicsDevice.Viewport.Height - 152, 230, 150), StartRound, 123));
             menuList[0].MenuObjects.Add(new MenuObjectText("Next Round", new Vector2(graphics.GraphicsDevice.Viewport.Width - 250, graphics.GraphicsDevice.Viewport.Height - 100), 123));
+        }
+
+        public static void MakeETP()
+        {
+            enemiesTurningPoints1.Add(new Vector2(392, 437));
+            enemiesTurningPoints1.Add(new Vector2(407, 242));
+            enemiesTurningPoints1.Add(new Vector2(558, 262));
+            enemiesTurningPoints1.Add(new Vector2(679, 295));
+            enemiesTurningPoints1.Add(new Vector2(750, 267));
+            enemiesTurningPoints1.Add(new Vector2(780, 194));
+            enemiesTurningPoints1.Add(new Vector2(766, 115));
+            enemiesTurningPoints1.Add(new Vector2(694, 85));
+            enemiesTurningPoints1.Add(new Vector2(503, 82));
+            enemiesTurningPoints1.Add(new Vector2(303, 138));
+            enemiesTurningPoints1.Add(new Vector2(265, 203));
+            enemiesTurningPoints1.Add(new Vector2(239, 379));
+            enemiesTurningPoints1.Add(new Vector2(154, 267));
+            enemiesTurningPoints1.Add(new Vector2(192, 53));
+            enemiesTurningPoints2.Add(new Vector2(1, 1));
+            enemiesTurningPoints2.Add(new Vector2(1, 1));
+            enemiesTurningPoints2.Add(new Vector2(1, 1));
+            enemiesTurningPoints2.Add(new Vector2(1, 1));
+            enemiesTurningPoints2.Add(new Vector2(1, 1));
+
         }
 
 
