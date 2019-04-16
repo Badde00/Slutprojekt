@@ -65,6 +65,8 @@ namespace Slutprojekt
         private Vector2 aboutButton;
         private List<MenuObject> menuObjectsList;
 
+        private double tempTime; //Test
+
 
         public double Time
         {
@@ -106,6 +108,9 @@ namespace Slutprojekt
             menuObjectsList = new List<MenuObject>();
 
 
+            tempTime = 0;
+
+
             MakeStartMenu();
         }
         
@@ -128,6 +133,7 @@ namespace Slutprojekt
             keyboardState = Keyboard.GetState();
 
             GameStateUpdate(gameTime); //Updaterar bara det som behövs
+
 
             previousKeyboardState = keyboardState;
             previousMouseState =mouseState;
@@ -187,7 +193,7 @@ namespace Slutprojekt
             {
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     gameState = GameState.Paused;
-                Playing.Update();
+                Playing.Update(gameTime);
                 time += gameTime.ElapsedGameTime.TotalSeconds;
             }
             else //Settings

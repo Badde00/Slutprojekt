@@ -27,40 +27,45 @@ namespace Slutprojekt
 
         public int Hp
         {
-            get;
-            set;
+            get { return hp; }
+            set { hp = value; }
         }
 
         public bool IsDead
         {
-            get;
-            private set;
+            get { return isDead; }
         }
 
         public int MaxHp
         {
-            get;
-            set;
+            get { return maxHp; }
+            set { maxHp = value; }
         }
 
         public int DangerLevel
         {
-            get;
-            private set;
+            get { return dangerLevel; }
         }
         
         public int Gold
         {
-            get;
-            private set;
+            get { return gold; }
         }
 
         protected float CalcDirection(Vector2 currentPos, Vector2 target)
         {
-            float d; //Kan inte skriva private innan float d eftersom VS klagar av någon anledning då
-            d = (float)Math.Atan((target.Y - currentPos.Y) / (target.X - currentPos.X));
+            float d;
+            d = (float)Math.Atan((currentPos.Y - target.Y) / (target.X - currentPos.X));
+            /* Vanligtvis för att räkna ut riktning så använder man (target.T-pos.Y)/(target.X-pos.X)
+             * Men eftersom Y är invänt i detta program (Y ökar nedåt) så har jag bytt plats på de 2 för att beräkningarna ska bli rätt
+             */
 
             return d;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
         }
     }
 }

@@ -18,31 +18,27 @@ namespace Slutprojekt
 
         public string Description
         {
-            get;
-            private set;
+            get { return description; }
         }
 
         public Texture2D Tex
         {
-            get;
-            private set;
+            get { return tex; }
         }
 
         public Vector2 Pos
         {
-            get;
-            private set;
+            get { return pos; }
         }
 
         public Rectangle Hitbox
         {
-            get;
-            private set;
+            get { return hitbox; }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tex, pos, Color.White);
+            spriteBatch.Draw(tex, hitbox, Color.White);
         }
 
         public virtual void Update() { }
