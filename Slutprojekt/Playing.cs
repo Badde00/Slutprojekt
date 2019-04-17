@@ -115,7 +115,7 @@ namespace Slutprojekt
                 spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
                 
 
-                if (spawnTime >= enemySpawners.Peek().time)
+                if (enemySpawners.Count > 0 && spawnTime >= enemySpawners.Peek().time)
                 {
                     SpawnEnemy();
                 }
@@ -163,9 +163,9 @@ namespace Slutprojekt
             {
                 if (round == 1)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, Assets.Enemy1, tPoints));
                     AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
                 }
                 else if (round == 2)
@@ -270,6 +270,9 @@ namespace Slutprojekt
                         if (!(u as BaseEnemy).IsDead)
                         {
                             temp.Add(u); //temp är listan av det jag ska behålla. 
+                        }
+                        else
+                        {
                             enemyCount--;
                         }
                     }
@@ -278,9 +281,14 @@ namespace Slutprojekt
                         temp.Add(u);
                     }
                 }
-                unitsWhenPlaying = temp;
-                temp = null;
+                
             }
+            unitsWhenPlaying.Clear();
+            foreach(BaseUnit u in temp) //Gör på detta sätt eftersom temp.Add(u) lade till u i unitsWhenPlaying också när jag bara hade unitsWhenPlaying = temp
+            {
+                unitsWhenPlaying.Add(u);
+            }
+            temp.Clear();
 
             if (enemyCount == 0 && firstESpawned)
                 EndTurn();
@@ -330,6 +338,8 @@ namespace Slutprojekt
 
             foreach (BaseUnit u in unitsWhenPlaying)
             { u.Draw(spriteBatch); }
+
+            spriteBatch.DrawString(Assets.Text, "Life: " + life.ToString(), new Vector2(10, 70), Color.Black);
         }
 
         public static void MakeNTurnButton()
@@ -345,15 +355,15 @@ namespace Slutprojekt
             enemiesTurningPoints1.Add(new Vector2(407, 242));
             enemiesTurningPoints1.Add(new Vector2(558, 262));
             enemiesTurningPoints1.Add(new Vector2(679, 295));
-            enemiesTurningPoints1.Add(new Vector2(740, 267));
-            enemiesTurningPoints1.Add(new Vector2(760, 194));
-            enemiesTurningPoints1.Add(new Vector2(740, 115));
+            enemiesTurningPoints1.Add(new Vector2(750, 267));
+            enemiesTurningPoints1.Add(new Vector2(780, 194));
+            enemiesTurningPoints1.Add(new Vector2(750, 115));
             enemiesTurningPoints1.Add(new Vector2(694, 95));
             enemiesTurningPoints1.Add(new Vector2(503, 78));
             enemiesTurningPoints1.Add(new Vector2(303, 138));
             enemiesTurningPoints1.Add(new Vector2(265, 203));
             enemiesTurningPoints1.Add(new Vector2(239, 379));
-            enemiesTurningPoints1.Add(new Vector2(154, 267));
+            enemiesTurningPoints1.Add(new Vector2(154, 363));
             enemiesTurningPoints1.Add(new Vector2(192, 53));
             enemiesTurningPoints2.Add(new Vector2(1, 1));
             enemiesTurningPoints2.Add(new Vector2(1, 1));
@@ -366,8 +376,8 @@ namespace Slutprojekt
 
         public static int Life
         {
-            get;
-            set;
+            get { return life; }
+            set { life = value; }
         }
     }
 }

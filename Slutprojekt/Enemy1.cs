@@ -29,7 +29,7 @@ namespace Slutprojekt
 
         public override void Update()
         {
-            if(turningPoints[currentTurningPoint + 1] == null)
+            if(turningPoints.Count <= currentTurningPoint + 1)
             {
                 Playing.Life -= dmg;
                 isDead = true;
@@ -46,13 +46,17 @@ namespace Slutprojekt
 
             }
 
-            
+
             //Kollar om enheten är inom 10 pixlar av nästa svängplats, så den inte missar den
-            if (pos.X >= turningPoints[currentTurningPoint + 1].X - 5 && pos.Y >= turningPoints[currentTurningPoint + 1].Y - 5 && 
-                pos.X <= turningPoints[currentTurningPoint + 1].X + 5 && pos.Y <= turningPoints[currentTurningPoint + 1].Y + 5) 
+            if (turningPoints.Count > currentTurningPoint + 1)
             {
-                currentTurningPoint++;
-                direction = CalcDirection(pos, turningPoints[currentTurningPoint + 1]);
+                if (pos.X >= turningPoints[currentTurningPoint + 1].X - 5 && pos.Y >= turningPoints[currentTurningPoint + 1].Y - 5 &&
+                    pos.X <= turningPoints[currentTurningPoint + 1].X + 5 && pos.Y <= turningPoints[currentTurningPoint + 1].Y + 5)
+                {
+                    currentTurningPoint++;
+                    if (currentTurningPoint + 1 < turningPoints.Count)
+                        direction = CalcDirection(pos, turningPoints[currentTurningPoint + 1]);
+                }
             }
 
             pos.X += velocity * (float)Math.Cos(direction);

@@ -55,7 +55,7 @@ namespace Slutprojekt
         protected float CalcDirection(Vector2 currentPos, Vector2 target)
         {
             float d;
-            d = (float)Math.Atan((currentPos.Y - target.Y) / (target.X - currentPos.X));
+            d = (float)Math.Atan2((currentPos.Y - target.Y), (target.X - currentPos.X));
             /* Vanligtvis för att räkna ut riktning så använder man (target.T-pos.Y)/(target.X-pos.X)
              * Men eftersom Y är invänt i detta program (Y ökar nedåt) så har jag bytt plats på de 2 för att beräkningarna ska bli rätt
              */

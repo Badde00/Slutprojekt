@@ -65,8 +65,6 @@ namespace Slutprojekt
         private Vector2 aboutButton;
         private List<MenuObject> menuObjectsList;
 
-        private double tempTime; //Test
-
 
         public double Time
         {
@@ -106,9 +104,6 @@ namespace Slutprojekt
             loadButton = new Vector2(135, 220);
             aboutButton = new Vector2(425, 220);
             menuObjectsList = new List<MenuObject>();
-
-
-            tempTime = 0;
 
 
             MakeStartMenu();
@@ -237,11 +232,6 @@ namespace Slutprojekt
             /*
              Kommer behöva: Map, runda, liv, pengar, Torn<>(positioner(x,y), texNamn, dmgCaused, projectileTex)
              */
-        }
-
-        public void EmptyTest(int i)
-        {
-
         }
     }
 }
