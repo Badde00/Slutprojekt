@@ -82,6 +82,7 @@ namespace Slutprojekt
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            game = this;
         }
 
         public static Game1 Game //Försöket till singelton
@@ -148,8 +149,24 @@ namespace Slutprojekt
             {
                 Playing.Draw(spriteBatch);
                 spriteBatch.DrawString(Assets.Text, Mouse.GetState().Position.ToString(), new Vector2(10, 10), Color.Black);
+                if (Playing.GetSelectedTower != SelectedTower.Empty)
+                {
+                    MouseDraw(gameTime);
+                }
             }
             spriteBatch.End();
+        }
+
+        private void MouseDraw(GameTime gametime)
+        {
+            if(Playing.GetSelectedTower == SelectedTower.Tower1)
+            {
+                spriteBatch.Draw(Assets.T1U0, new Rectangle(mouseState.X, mouseState.Y, 50, 50), Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(Assets.T2U0, new Rectangle(mouseState.X, mouseState.Y, 50, 50), Color.White);
+            }
         }
 
         private void MakeStartMenu() //Inte klar. Måste fixa knappar först

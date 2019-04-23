@@ -64,6 +64,7 @@ namespace Slutprojekt
         private static List<PartialMenu> menuList = new List<PartialMenu>();
         private static Queue<EnemySpawner> enemySpawners = new Queue<EnemySpawner>();
         private static PlayingState pState = new PlayingState();
+        private static SelectedTower selectedTower = new SelectedTower();
 
         private static List<MenuObject> tempList = new List<MenuObject>();
 
@@ -76,6 +77,11 @@ namespace Slutprojekt
         {
             get;
             set;
+        }
+
+        public static SelectedTower GetSelectedTower
+        {
+            get { return selectedTower; }
         }
 
         public static void StartPlaying(SelectedTrack s, GraphicsDeviceManager g)
@@ -145,18 +151,17 @@ namespace Slutprojekt
         
         public static void StartRound()
         {
+            List<MenuObject> t = new List<MenuObject>();
             round++;
             pState = PlayingState.playing;
             for (int i = 0; i <= menuList[0].MenuObjects.Count - 1; i++)
             {
-                if (menuList[0].MenuObjects[i] is MenuObjectButton)
+                if (menuList[0].MenuObjects[i].Id != 123)
                 {
-                    if ((menuList[0].MenuObjects[i] as MenuObjectButton).Id == 123)
-                    {
-                        menuList[0].MenuObjects.RemoveAt(i);
-                    }
+                    t.Add(menuList[0].MenuObjects[i]);
                 }
             }
+            menuList[0].MenuObjects = t;
 
             //Innehåller det som ska spawnas under rundor, if(round==1) etc. Jag gjorde if(true) så jag kan förminska allt.
             if (true)
@@ -296,27 +301,32 @@ namespace Slutprojekt
 
         public static void PlaceTowers()
         {
-            if (keyboardState.IsKeyUp(Keys.D1) && keyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost)
+            if (keyboardState.IsKeyUp(Keys.D1) && previousKeyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost)
             {
-                Game1.Game.selectedTower = SelectedTower.Tower1;
+                selectedTower = SelectedTower.Tower1;
             }
 
-            if (keyboardState.IsKeyUp(Keys.D2) && keyboardState.IsKeyDown(Keys.D2) && money >= t2U0Cost)
+            if (keyboardState.IsKeyUp(Keys.D2) && previousKeyboardState.IsKeyDown(Keys.D2) && money >= t2U0Cost)
             {
-                Game1.Game.selectedTower = SelectedTower.Tower2;
+                selectedTower = SelectedTower.Tower2;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && Game1.Game.selectedTower == SelectedTower.Tower1) //Placera torn
+            if(selectedTower != SelectedTower.Empty && keyboardState.IsKeyUp(Keys.Back) && previousKeyboardState.IsKeyDown(Keys.Back)) //För att sluta placera torn 
+            {
+                selectedTower = SelectedTower.Empty;
+            }
+
+            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower1) //Placera torn
             {
                 money -= t1U0Cost;
-                unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
+                unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.Position.X, mouseState.Position.Y)));
                 Game1.Game.selectedTower = SelectedTower.Empty;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && Game1.Game.selectedTower == SelectedTower.Tower2) //Placera torn
+            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower2) //Placera torn
             {
                 money -= t2U0Cost;
-                unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y), null));
+                unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y)));
                 Game1.Game.selectedTower = SelectedTower.Empty;
             }
         }

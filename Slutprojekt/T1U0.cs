@@ -10,15 +10,24 @@ namespace Slutprojekt
 {
     class T1U0 : Tower1
     {
-        public T1U0(Vector2 zPos, int? zDmgCaused)
+        public T1U0(Vector2 zPos, int zDmgCaused)
         {
             tex = Assets.T1U0;
             pos = zPos;
             projectileTex = Assets.T1Projectile;
 
-            if (zDmgCaused == null)
-                zDmgCaused = 0;
+            zDmgCaused = 0;
             //hitbox
+            upgradeCost = 350;
+        }
+
+        public T1U0(Vector2 zPos)
+        {
+            tex = Assets.T1U0;
+            pos = zPos;
+            projectileTex = Assets.T1Projectile;
+
+
             upgradeCost = 350;
         }
 
