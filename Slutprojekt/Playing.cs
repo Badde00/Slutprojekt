@@ -9,6 +9,11 @@ using System.Threading.Tasks;
 
 namespace Slutprojekt
 {
+    /*Att göra:
+     * Fråga tim om rotation i Projectile
+     * Fråga tim om förflyttning av hitbox i Enemy1 och Projectile
+     * Få torn att sikta i BaseTower
+     */
     public enum ChosenE
     {
         e1,
@@ -59,30 +64,19 @@ namespace Slutprojekt
         private static Texture2D tex;
         private static GraphicsDeviceManager graphics;
         private static double spawnTime = 0;
-        //private static GameTime gameTime = new GameTime();
         private static List<BaseUnit> temp = new List<BaseUnit>();
         private static List<PartialMenu> menuList = new List<PartialMenu>();
         private static Queue<EnemySpawner> enemySpawners = new Queue<EnemySpawner>();
         private static PlayingState pState = new PlayingState();
         private static SelectedTower selectedTower = new SelectedTower();
-
-        private static List<MenuObject> tempList = new List<MenuObject>();
+        private static List<BaseTower> shootingTowers = new List<BaseTower>();
 
 
         private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1
         private static List<Vector2> enemiesTurningPoints2 = new List<Vector2>(); //Vart fiender ska gå i bana 2
         private static List<Vector2> tPoints;
 
-        public static List<BaseUnit> UnitsWhenPlaying
-        {
-            get;
-            set;
-        }
 
-        public static SelectedTower GetSelectedTower
-        {
-            get { return selectedTower; }
-        }
 
         public static void StartPlaying(SelectedTrack s, GraphicsDeviceManager g)
         {
@@ -98,6 +92,7 @@ namespace Slutprojekt
                 tPoints = enemiesTurningPoints1;
             }
 
+            selectedTower = SelectedTower.Empty;
             menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank));
             MakeNTurnButton();
             MakeETP();
@@ -133,15 +128,20 @@ namespace Slutprojekt
                 p.Update();
 
             foreach (BaseUnit u in unitsWhenPlaying)
+            {
                 u.Update();
 
-
-
-            //Temporärt, till jag eller Tim fixar StartButton-bug
-            if(keyboardState.IsKeyUp(Keys.U) && previousKeyboardState.IsKeyDown(Keys.U))
-            {
-                StartRound();
+                if(u is BaseTower && (u as BaseTower).WillShoot) //Kan inte skjuta i updatera då det ändrar listan (torn å bullets i samma). Min lösning
+                {
+                    shootingTowers.Add(u as BaseTower);
+                }
             }
+
+            foreach(BaseTower t in shootingTowers)
+            {
+                t.Shoot();
+            }
+            shootingTowers.Clear();
 
 
 
@@ -281,6 +281,11 @@ namespace Slutprojekt
                             enemyCount--;
                         }
                     }
+                    else if(u is Projectile)
+                    {
+                        if (!(u as Projectile).IsDead)
+                            temp.Add(u);
+                    }
                     else
                     {
                         temp.Add(u);
@@ -319,15 +324,15 @@ namespace Slutprojekt
             if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower1) //Placera torn
             {
                 money -= t1U0Cost;
-                unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.Position.X, mouseState.Position.Y)));
-                Game1.Game.selectedTower = SelectedTower.Empty;
+                unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.X, mouseState.Y)));
+                selectedTower = SelectedTower.Empty;
             }
 
             if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower2) //Placera torn
             {
                 money -= t2U0Cost;
                 unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y)));
-                Game1.Game.selectedTower = SelectedTower.Empty;
+                selectedTower = SelectedTower.Empty;
             }
         }
 
@@ -389,5 +394,17 @@ namespace Slutprojekt
             get { return life; }
             set { life = value; }
         }
+
+        public static List<BaseUnit> UnitsWhenPlaying
+        {
+            get { return unitsWhenPlaying; }
+            set { unitsWhenPlaying = value; }
+        }
+
+        public static SelectedTower GetSelectedTower
+        {
+            get { return selectedTower; }
+        }
+
     }
 }

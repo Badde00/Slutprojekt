@@ -71,10 +71,7 @@ namespace Slutprojekt
 
         public static Texture2D Enemy3 { get { return enemy3; } }
 
-        public static SpriteFont Text
-        {
-            get { return text; }
-        }
+        public static SpriteFont Text { get { return text; } }
 
         public static Texture2D Bana1
         {      
@@ -108,7 +105,7 @@ namespace Slutprojekt
                
         public static Texture2D T1Projectile
         {      
-            get { return t1U1; }
+            get { return t1Projectile; }
         }      
                
         public static Texture2D T2U0

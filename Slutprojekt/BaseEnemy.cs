@@ -10,7 +10,7 @@ namespace Slutprojekt
 {
     abstract class BaseEnemy : BaseUnit
     {
-        protected int baseHp = 100;
+        protected int baseHp;
         protected int hp;
         protected int maxHp;
         protected int dangerLevel; //Detta ska vara ett nummer som påverkar hur torn attakerar. 
@@ -50,6 +50,11 @@ namespace Slutprojekt
         public int Gold
         {
             get { return gold; }
+        }
+
+        public float DistanceTraveled
+        {
+            get { return distanceTraveled; }
         }
 
         protected float CalcDirection(Vector2 currentPos, Vector2 target)

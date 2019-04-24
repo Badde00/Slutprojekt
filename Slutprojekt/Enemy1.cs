@@ -13,6 +13,7 @@ namespace Slutprojekt
         public Enemy1(int round, Texture2D zTex, List<Vector2> tPoints)
         {
             roundModifier = 1 + ((round * round) / 100);
+            baseHp = 100;
             hp = baseHp * (int)roundModifier;
             maxHp = hp;
             baseVelocity = 1.5f;
@@ -41,12 +42,6 @@ namespace Slutprojekt
             }
 
 
-            if(currentTurningPoint == 4)
-            {
-
-            }
-
-
             //Kollar om enheten är inom 10 pixlar av nästa svängplats, så den inte missar den
             if (turningPoints.Count > currentTurningPoint + 1)
             {
@@ -61,6 +56,8 @@ namespace Slutprojekt
 
             pos.X += velocity * (float)Math.Cos(direction);
             pos.Y += velocity * (float)Math.Sin(-direction); //-dir pga omvänt y från vanlig matte
+            distanceTraveled += (float)Math.Sqrt(velocity * (float)Math.Cos(direction) * velocity * (float)Math.Cos(direction)
+                + velocity * (float)Math.Sin(-direction) * velocity * (float)Math.Sin(-direction)); //Pytagoras sats för att räkna ut hur långt den har flyttat på sig
             hitbox.Location = new Point((int)pos.X - 25, (int)pos.Y - 25);
         }
     }

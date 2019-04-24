@@ -15,10 +15,18 @@ namespace Slutprojekt
             tex = Assets.T1U0;
             pos = zPos;
             projectileTex = Assets.T1Projectile;
+            hitbox = new Rectangle((int)zPos.X, (int)zPos.Y, 50, 50);
+            //description
 
-            zDmgCaused = 0;
-            //hitbox
+            dmgCaused = zDmgCaused;
             upgradeCost = 350;
+            aps = 0.8;
+            dmg = 40;
+            radius = 150;
+            pierce = 2;
+            projectileSpeed = 10;
+            dArea = new Circle((int)pos.X, (int)pos.Y, radius);
+            targetMode = AttackMode.first;
         }
 
         public T1U0(Vector2 zPos)
@@ -26,20 +34,20 @@ namespace Slutprojekt
             tex = Assets.T1U0;
             pos = zPos;
             projectileTex = Assets.T1Projectile;
+            hitbox = new Rectangle((int)zPos.X, (int)zPos.Y, 50, 50);
+            //description
 
 
+            dmgCaused = 0;
             upgradeCost = 350;
+            aps = 0.8;
+            dmg = 40;
+            radius = 150;
+            pierce = 2;
+            projectileSpeed = 10;
+            dArea = new Circle((int)pos.X, (int)pos.Y, radius);
+            targetMode = AttackMode.first;
         }
-
-        /*public override T1U0(Texture2D zTex, Vector2 zPos, Texture2D zProjectileTex, int zDmgCaused) //För efter jag sparat spelet och ska starta igen
-        {
-            tex = zTex;
-            pos = zPos;
-            projectileTex = zProjectileTex;
-
-            //hitbox
-            upgradeCost = 350;
-        }*/
 
         public override void Update()
         {

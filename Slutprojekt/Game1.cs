@@ -55,7 +55,6 @@ namespace Slutprojekt
         private FrontMenu menu;
         private double time;
         private GameState gameState;
-        public SelectedTower selectedTower;
         MouseState mouseState;
         MouseState previousMouseState;
         KeyboardState keyboardState;
@@ -68,14 +67,12 @@ namespace Slutprojekt
 
         public double Time
         {
-            get;
-            private set;
+            get { return time; }
         }
 
         public GraphicsDeviceManager Graphics
         {
-            get;
-            private set;
+            get { return graphics; }
         }
 
         public Game1()
@@ -101,7 +98,6 @@ namespace Slutprojekt
             base.Initialize();
             position = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
             this.IsMouseVisible = true;
-            selectedTower = SelectedTower.Empty;
             loadButton = new Vector2(135, 220);
             aboutButton = new Vector2(425, 220);
             menuObjectsList = new List<MenuObject>();
