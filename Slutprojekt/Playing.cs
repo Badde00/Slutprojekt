@@ -9,26 +9,23 @@ using System.Threading.Tasks;
 
 namespace Slutprojekt
 {
-    /*Att göra:
-     * Fråga tim om rotation i Projectile
-     * Fråga tim om förflyttning av hitbox i Enemy1 och Projectile
-     * Få torn att sikta i BaseTower
+    /*Att fixa:
+     * Fiender ger ej pengar när de dör
      */
-    public enum ChosenE
-    {
-        e1,
-        e2
-    }
 
-    public enum PlayingState
+     /*Att göra:
+      * 
+      */
+
+    public enum PlayingState //Vilken state det spelande spelet är, för vad som ska uppdateras
     {
         start,
         playing,
-        ended,
-        other
+        paused,
+        ended
     }
 
-    public enum SelectedTower //När du placerar torn, så kommer du att välja ett och då ändras denna
+    public enum SelectedTower //När du ska placera torn, innan du gjort det, så kommer du att välja ett och då ändras denna
     {
         Empty,
         Tower1,
@@ -52,53 +49,55 @@ namespace Slutprojekt
         private static int round = 0;
         private static int life = 100;
         private static int money = 1000;
-        private static int t1U0Cost = 450;
+        private static int t1U0Cost = 450; //t1U0 == tower 1, upgrade 0
         private static int t2U0Cost = 600;
         private static int enemyCount = 0;
         private static bool firstESpawned = false; //Eftersom jag avslutar rundan när det inte finns fiender så använder jag även denna för att kolla att jag inte avslutar innan första fienden
-        private static List<BaseUnit> unitsWhenPlaying = new List<BaseUnit>();
+        private static List<BaseUnit> unitsWhenPlaying = new List<BaseUnit>(); //Listan med torn, fienden och projektiler, för uppdatering
         private static KeyboardState keyboardState; //Gör separata keyboardstate från Game1 då det blir mindre att skriva och prestanda och effektiv programmering inte är det jag fokuserar på
         private static KeyboardState previousKeyboardState = Keyboard.GetState();
         private static MouseState mouseState;
         private static MouseState previousMouseState;
-        private static Texture2D tex;
+        private static Texture2D tex; //Banans bakgrund
         private static GraphicsDeviceManager graphics;
-        private static double spawnTime = 0;
-        private static List<BaseUnit> temp = new List<BaseUnit>();
-        private static List<PartialMenu> menuList = new List<PartialMenu>();
-        private static Queue<EnemySpawner> enemySpawners = new Queue<EnemySpawner>();
+        private static double spawnTime = 0; //Tiden mellan varje fiende
+        private static List<BaseUnit> temp = new List<BaseUnit>(); //När jag tömmer unitsWhenPlaying, så jag inte ändrar i en foreach
+        private static List<PartialMenu> menuList = new List<PartialMenu>(); //Alla menyer i playing, så de inte grupperas med de i Game1
+        private static Queue<EnemySpawner> enemySpawners = new Queue<EnemySpawner>(); //Lägger fiender som ska spawnas i denna kö, så jag kan spawna dem en i taget
         private static PlayingState pState = new PlayingState();
         private static SelectedTower selectedTower = new SelectedTower();
-        private static List<BaseTower> shootingTowers = new List<BaseTower>();
+        private static List<BaseTower> shootingTowers = new List<BaseTower>(); //Jag kan inte skuta när jag uppdaterar alla unitsWhenPlaying, så jag gjorde denna listan och gör det efter
+        private static BaseTower chosenT; //När jag har valt ett torn genom att klicka på det. För uppgradering och info om torn
 
 
         private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1
         private static List<Vector2> enemiesTurningPoints2 = new List<Vector2>(); //Vart fiender ska gå i bana 2
-        private static List<Vector2> tPoints;
+        private static List<Vector2> tPoints; //Den jag ska använda
 
 
 
-        public static void StartPlaying(SelectedTrack s, GraphicsDeviceManager g)
+        public static void StartPlaying(SelectedTrack s, GraphicsDeviceManager g) //Nytt Game
         {
-            graphics = g;
+            graphics = g; //Tar grafiken från Game1
             pState = PlayingState.start;
-            if(s == SelectedTrack.Level1)
+            MakeETP(); //Fyller enemiesTurningPoints 1&2
+
+            if (s == SelectedTrack.Level1) //Den valda banan från Game1 startmenyn väljer bakgrundsbild och väljer vart fiender ska gå
             {
                 tex = Assets.Bana1;
                 tPoints = enemiesTurningPoints1;
             } else
             {
                 tex = Assets.Bana2;
-                tPoints = enemiesTurningPoints1;
+                tPoints = enemiesTurningPoints2;
             }
 
             selectedTower = SelectedTower.Empty;
-            menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank));
-            MakeNTurnButton();
-            MakeETP();
+            menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank)); //Den första listan ska användas till alla vanliga knappar
+            MakeNTurnButton(); //Knappen för ny runda
         }
 
-        public static void ContiniuePlaying()
+        public static void ContiniuePlaying() //Load Game
         {
 
         }
@@ -109,25 +108,25 @@ namespace Slutprojekt
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
 
-            if(pState == PlayingState.playing)
+            if(pState == PlayingState.playing) //Det som endast ska hända när jag aktivt spelar, inte pausat etc
             {
-                RemoveDead();
+                RemoveDead(); //Tar bort döda fiender och projektiler samt avslutar rundan
 
-                spawnTime += gameTime.ElapsedGameTime.TotalSeconds;
+                spawnTime += gameTime.ElapsedGameTime.TotalSeconds; //Räknar tiden mellan att fiender spawnar
                 
 
-                if (enemySpawners.Count > 0 && spawnTime >= enemySpawners.Peek().time)
+                if (enemySpawners.Count > 0 && spawnTime >= enemySpawners.Peek().time) //Spawnar nya fiender efter en tid
                 {
                     SpawnEnemy();
                 }
             }
 
-            PlaceTowers();
+            PlaceTowers(); //Känner om du har valt ett torn och om du klickar för att placera det
 
-            foreach(PartialMenu p in menuList)
+            foreach(PartialMenu p in menuList) //Uppd. alla menyer
                 p.Update();
 
-            foreach (BaseUnit u in unitsWhenPlaying)
+            foreach (BaseUnit u in unitsWhenPlaying) //Uppd. alla units
             {
                 u.Update();
 
@@ -137,12 +136,14 @@ namespace Slutprojekt
                 }
             }
 
-            foreach(BaseTower t in shootingTowers)
+            foreach(BaseTower t in shootingTowers) //Skjuter
             {
                 t.Shoot();
             }
             shootingTowers.Clear();
 
+            if (life <= 0)
+                YouLose();
 
 
             previousMouseState = mouseState;
@@ -151,19 +152,19 @@ namespace Slutprojekt
         
         public static void StartRound()
         {
-            List<MenuObject> t = new List<MenuObject>();
+            List<MenuObject> t = new List<MenuObject>(); //som temp, men för menyer. används för att ta bort bara nextRound knappen
             round++;
             pState = PlayingState.playing;
             for (int i = 0; i <= menuList[0].MenuObjects.Count - 1; i++)
             {
-                if (menuList[0].MenuObjects[i].Id != 123)
+                if (menuList[0].MenuObjects[i].Id != 123) //Nextroundknappen och dens text är de enda med detta id
                 {
                     t.Add(menuList[0].MenuObjects[i]);
                 }
             }
             menuList[0].MenuObjects = t;
 
-            //Innehåller det som ska spawnas under rundor, if(round==1) etc. Jag gjorde if(true) så jag kan förminska allt.
+            //Innehåller det som ska spawnas under rundor, if(round==1) etc. Jag gjorde if(true) så jag kan förminska allt. Innehåller alla fiender för de 10 första rundorna
             if (true)
             {
                 if (round == 1)
@@ -258,7 +259,7 @@ namespace Slutprojekt
         public static void SpawnEnemy()
         {
             spawnTime = 0;
-            if (!firstESpawned)
+            if (!firstESpawned) //Rundan avslutas när det inte finns fiender kvar. Detta är så att rundor inte ska avslutas innan de börjats
                 firstESpawned = true;
             unitsWhenPlaying.Add(enemySpawners.Dequeue().enemyToSpawn);
             enemyCount++;
@@ -306,7 +307,7 @@ namespace Slutprojekt
 
         public static void PlaceTowers()
         {
-            if (keyboardState.IsKeyUp(Keys.D1) && previousKeyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost)
+            if (keyboardState.IsKeyUp(Keys.D1) && previousKeyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost) //Väljer torn. I draw så kollar den vilket torn som är valt och ritar det vi musen
             {
                 selectedTower = SelectedTower.Tower1;
             }
@@ -355,6 +356,7 @@ namespace Slutprojekt
             { u.Draw(spriteBatch); }
 
             spriteBatch.DrawString(Assets.Text, "Life: " + life.ToString(), new Vector2(10, 70), Color.Black);
+            spriteBatch.DrawString(Assets.Text, "$ " + money.ToString(), new Vector2(10, 130), Color.Black);
         }
 
         public static void MakeNTurnButton()
@@ -388,6 +390,11 @@ namespace Slutprojekt
 
         }
 
+        public static void YouLose()
+        {
+            menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.))
+        }
+
 
         public static int Life
         {
@@ -405,6 +412,5 @@ namespace Slutprojekt
         {
             get { return selectedTower; }
         }
-
     }
 }

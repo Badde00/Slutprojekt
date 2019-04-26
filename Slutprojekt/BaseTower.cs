@@ -28,7 +28,7 @@ namespace Slutprojekt
         protected int pierce; //Hur många fiender det kan träffa
         protected int upgradeCost;
         protected float projectileSpeed; 
-        protected double projectileDegreeDir; //I grader för vart tornet ska skjuta. kommer att användas med cos och sin för förflyttning
+        protected double projectileDir; //Vart tornet ska skjuta
         protected int dmgCaused;
         protected Texture2D projectileTex;
         protected AttackMode targetMode;
@@ -93,11 +93,11 @@ namespace Slutprojekt
                 }
             }
             if(target != null)
-                projectileDegreeDir = FindEnemy(target.Pos);
+                projectileDir = FindEnemy(target.Pos);
 
 
-            Playing.UnitsWhenPlaying.Add(new Projectile(pierce, pVector(projectileSpeed, projectileDegreeDir), dmg,
-                projectileTex, pos, new Rectangle((int)pos.X, (int)pos.Y, projectileTex.Width, projectileTex.Width)));
+            Playing.UnitsWhenPlaying.Add(new Projectile(pierce, projectileSpeed, (float)projectileDir, dmg,
+                projectileTex, new Vector2(pos.X + 25, pos.Y + 25), new Rectangle((int)pos.X + 25, (int)pos.Y +25, projectileTex.Width, projectileTex.Width), ProjDir()));
         }
 
         public override void Update()
@@ -106,22 +106,16 @@ namespace Slutprojekt
 
             AddEClose();
 
-            RemoveEClose();
-
             if (time >= (1 / aps) && enemiesClose.Count > 0)
             {
-                time -= (1 / aps);
+                time = 0;
                 willShoot = true;
             }
 
             previousTime = Game1.Game.Time;
         }
 
-        public Vector2 pVector(float speed, double angle) //Lättare att läsa
-        {
-            Vector2 temp = new Vector2(speed * (float)Math.Cos(angle), speed * (float)Math.Sin(angle));
-            return temp;
-        }
+        
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -138,6 +132,7 @@ namespace Slutprojekt
 
         protected void AddEClose()
         {
+            enemiesClose.Clear();
             foreach (BaseUnit u in Playing.UnitsWhenPlaying)
             {
                 if (u is BaseEnemy)
@@ -150,22 +145,11 @@ namespace Slutprojekt
             }
         }
 
-        protected void RemoveEClose()
+        protected Vector2 ProjDir()
         {
-            foreach(BaseEnemy e in enemiesClose)
-            {
-                if(dArea.Intersects(e.Hitbox))
-                {
-                    tempEClose.Add(e);
-                }
-            }
-
-            enemiesClose.Clear();
-            foreach(BaseEnemy e in tempEClose)
-            {
-                enemiesClose.Add(e);
-            }
-            tempEClose.Clear();
+            Vector2 d = target.Pos - pos;
+            d.Normalize();
+            return d;
         }
     }
 }

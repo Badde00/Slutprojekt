@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Menu.png" />
+    <Content Include="Content\T1Projectile.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

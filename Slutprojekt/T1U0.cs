@@ -24,7 +24,7 @@ namespace Slutprojekt
             dmg = 40;
             radius = 150;
             pierce = 2;
-            projectileSpeed = 10;
+            projectileSpeed = 7.5f;
             dArea = new Circle((int)pos.X, (int)pos.Y, radius);
             targetMode = AttackMode.first;
         }

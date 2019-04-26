@@ -12,10 +12,12 @@ namespace Slutprojekt
     {   //Valde att skippa size
         private int pierce; //Antalet fiender som kan träffas
         private List<BaseEnemy> enemiesHit;
-        private Vector2 speed;
+        private float speed;
         private int dmg;
         private bool isDead;
         Vector2 texCenter;
+        float angle;
+        Vector2 dir;
 
 
         public int Dmg
@@ -28,7 +30,7 @@ namespace Slutprojekt
             get { return isDead; }
         }
 
-        public Projectile(int zPierce, Vector2 zSpeed, int zDmg, Texture2D zTex, Vector2 zPos, Rectangle zHitBox)
+        public Projectile(int zPierce, float zSpeed, float zAngle, int zDmg, Texture2D zTex, Vector2 zPos, Rectangle zHitBox, Vector2 zDir)
         {
             description = null; //projektilerna behöver ingen description
             isDead = false;
@@ -38,6 +40,8 @@ namespace Slutprojekt
             dmg = zDmg;
             tex = zTex;
             pos = zPos;
+            angle = zAngle;
+            dir = zDir;
 
             texCenter = new Vector2(tex.Width / 2, tex.Height / 2);
             hitbox = new Rectangle((int)zPos.X, (int)zPos.Y, 20, 20);
@@ -64,15 +68,13 @@ namespace Slutprojekt
                 }
             }
 
-            pos += speed;
-            hitbox.Location = new Point((int)pos.X - 25, (int)pos.Y - 25);
+            pos += dir * speed;
+            hitbox.Location = new Point((int)pos.X, (int)pos.Y);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            base.Draw(spriteBatch);
-            //Måste fråga tim hur man roterar
-            //spriteBatch.Draw(tex, new Rectangle(300, 300, tex.Width, tex.Height), null, Color.White, y, texCenter, SpriteEffects.None, 0); 
+            spriteBatch.Draw(tex, new Rectangle((int)pos.X - 25, (int)pos.Y - 25, hitbox.Width, hitbox.Height), null, Color.White, -angle-(float)Math.PI/2, texCenter, SpriteEffects.None,0); 
         }
     }
 }
