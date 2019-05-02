@@ -14,7 +14,14 @@ namespace Slutprojekt
      */
 
      /*Att göra:
-      * 
+      * You lose
+      * * Meny, pop-up
+      * Placera på bana
+      * Klicka på och välja 
+      * Bana 2
+      * Torn 2
+      * Torn uppgraderingar
+      * Fiende 2
       */
 
     public enum PlayingState //Vilken state det spelande spelet är, för vad som ska uppdateras
@@ -119,6 +126,19 @@ namespace Slutprojekt
                 {
                     SpawnEnemy();
                 }
+
+                if (life <= 0)
+                    YouLose();
+
+                foreach (BaseUnit u in unitsWhenPlaying) //Uppd. alla units
+                {
+                    u.Update();
+
+                    if (u is BaseTower && (u as BaseTower).WillShoot) //Kan inte skjuta i updatera då det ändrar listan (torn å bullets i samma). Min lösning
+                    {
+                        shootingTowers.Add(u as BaseTower);
+                    }
+                }
             }
 
             PlaceTowers(); //Känner om du har valt ett torn och om du klickar för att placera det
@@ -126,24 +146,13 @@ namespace Slutprojekt
             foreach(PartialMenu p in menuList) //Uppd. alla menyer
                 p.Update();
 
-            foreach (BaseUnit u in unitsWhenPlaying) //Uppd. alla units
-            {
-                u.Update();
-
-                if(u is BaseTower && (u as BaseTower).WillShoot) //Kan inte skjuta i updatera då det ändrar listan (torn å bullets i samma). Min lösning
-                {
-                    shootingTowers.Add(u as BaseTower);
-                }
-            }
+            
 
             foreach(BaseTower t in shootingTowers) //Skjuter
             {
                 t.Shoot();
             }
             shootingTowers.Clear();
-
-            if (life <= 0)
-                YouLose();
 
 
             previousMouseState = mouseState;
@@ -392,7 +401,17 @@ namespace Slutprojekt
 
         public static void YouLose()
         {
-            menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.))
+            pState = PlayingState.ended;
+
+            foreach(BaseUnit u in unitsWhenPlaying)
+            {
+
+            }
+            PartialMenu p = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu);
+            menuList.Add(p);
+            p.MenuObjects.Add(new MenuObjectText("YOU LOSE", new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Width / 2 + 100)));
+
+            menuList.Remove(p);
         }
 
 
@@ -411,6 +430,12 @@ namespace Slutprojekt
         public static SelectedTower GetSelectedTower
         {
             get { return selectedTower; }
+        }
+
+        public static int Money
+        {
+            get { return money; }
+            set { money = value; }
         }
     }
 }

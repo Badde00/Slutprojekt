@@ -68,6 +68,12 @@ namespace Slutprojekt
             return d;
         }
 
+        protected void Died()
+        {
+            isDead = true;
+            Playing.Money += gold;
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);

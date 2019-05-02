@@ -31,6 +31,7 @@ namespace Slutprojekt
         private static Texture2D enemy1;
         private static Texture2D enemy2;
         private static Texture2D enemy3;
+        private static Texture2D partialMenu;
 
         public static void LoadContent(ContentManager content)
         {
@@ -55,7 +56,10 @@ namespace Slutprojekt
             enemy1 = content.Load<Texture2D>("Enemy1");
             enemy2 = content.Load<Texture2D>("Enemy2");
             enemy3 = content.Load<Texture2D>("Enemy3");
+            partialMenu = content.Load<Texture2D>("PartialMenu");
         }
+
+        public static Texture2D PartialMenu { get { return partialMenu; } }
 
         public static Texture2D Button { get { return button; } }
 
