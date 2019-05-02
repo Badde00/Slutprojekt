@@ -14,9 +14,7 @@ namespace Slutprojekt
      */
 
      /*Att göra:
-      * You lose
-      * * Meny, pop-up
-      * Placera på bana
+      * Ej placera på bana
       * Klicka på och välja 
       * Bana 2
       * Torn 2
@@ -53,32 +51,34 @@ namespace Slutprojekt
             }
         }
 
-        private static int round = 0;
-        private static int life = 100;
-        private static int money = 1000;
-        private static int t1U0Cost = 450; //t1U0 == tower 1, upgrade 0
-        private static int t2U0Cost = 600;
-        private static int enemyCount = 0;
-        private static bool firstESpawned = false; //Eftersom jag avslutar rundan när det inte finns fiender så använder jag även denna för att kolla att jag inte avslutar innan första fienden
-        private static List<BaseUnit> unitsWhenPlaying = new List<BaseUnit>(); //Listan med torn, fienden och projektiler, för uppdatering
+        private static int round;
+        private static int life;
+        private static int money;
+        private static int t1U0Cost; //t1U0 == tower 1, upgrade 0
+        private static int t2U0Cost;
+        private static int enemyCount;
+        private static bool firstESpawned; //Eftersom jag avslutar rundan när det inte finns fiender så använder jag även denna för att kolla att jag inte avslutar innan första fienden
+        private static List<BaseUnit> unitsWhenPlaying; //Listan med torn, fienden och projektiler, för uppdatering
         private static KeyboardState keyboardState; //Gör separata keyboardstate från Game1 då det blir mindre att skriva och prestanda och effektiv programmering inte är det jag fokuserar på
-        private static KeyboardState previousKeyboardState = Keyboard.GetState();
+        private static KeyboardState previousKeyboardState;
         private static MouseState mouseState;
         private static MouseState previousMouseState;
         private static Texture2D tex; //Banans bakgrund
         private static GraphicsDeviceManager graphics;
-        private static double spawnTime = 0; //Tiden mellan varje fiende
-        private static List<BaseUnit> temp = new List<BaseUnit>(); //När jag tömmer unitsWhenPlaying, så jag inte ändrar i en foreach
-        private static List<PartialMenu> menuList = new List<PartialMenu>(); //Alla menyer i playing, så de inte grupperas med de i Game1
-        private static Queue<EnemySpawner> enemySpawners = new Queue<EnemySpawner>(); //Lägger fiender som ska spawnas i denna kö, så jag kan spawna dem en i taget
-        private static PlayingState pState = new PlayingState();
-        private static SelectedTower selectedTower = new SelectedTower();
-        private static List<BaseTower> shootingTowers = new List<BaseTower>(); //Jag kan inte skuta när jag uppdaterar alla unitsWhenPlaying, så jag gjorde denna listan och gör det efter
+        private static double spawnTime; //Tiden mellan varje fiende
+        private static List<BaseUnit> temp; //När jag tömmer unitsWhenPlaying, så jag inte ändrar i en foreach
+        private static List<PartialMenu> menuList; //Alla menyer i playing, så de inte grupperas med de i Game1
+        private static Queue<EnemySpawner> enemySpawners; //Lägger fiender som ska spawnas i denna kö, så jag kan spawna dem en i taget
+        private static PlayingState pState;
+        private static SelectedTower selectedTower;
+        private static List<BaseTower> shootingTowers; //Jag kan inte skuta när jag uppdaterar alla unitsWhenPlaying, så jag gjorde denna listan och gör det efter
         private static BaseTower chosenT; //När jag har valt ett torn genom att klicka på det. För uppgradering och info om torn
+        private static PartialMenu lostMenu; //Ska bara ha en och om jag gör den här så kan jag använda list.Remove(lostMenu);
+        private static SelectedTrack selectedTrack; //För då jag ska starta om, så jag vet vilken bana
+        
 
-
-        private static List<Vector2> enemiesTurningPoints1 = new List<Vector2>(); //Vart fiender ska gå i bana 1
-        private static List<Vector2> enemiesTurningPoints2 = new List<Vector2>(); //Vart fiender ska gå i bana 2
+        private static List<Vector2> enemiesTurningPoints1; //Vart fiender ska gå i bana 1
+        private static List<Vector2> enemiesTurningPoints2; //Vart fiender ska gå i bana 2
         private static List<Vector2> tPoints; //Den jag ska använda
 
 
@@ -87,6 +87,9 @@ namespace Slutprojekt
         {
             graphics = g; //Tar grafiken från Game1
             pState = PlayingState.start;
+            enemiesTurningPoints1 = new List<Vector2>();
+            enemiesTurningPoints2 = new List<Vector2>();
+            menuList = new List<PartialMenu>();
             MakeETP(); //Fyller enemiesTurningPoints 1&2
 
             if (s == SelectedTrack.Level1) //Den valda banan från Game1 startmenyn väljer bakgrundsbild och väljer vart fiender ska gå
@@ -102,6 +105,23 @@ namespace Slutprojekt
             selectedTower = SelectedTower.Empty;
             menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank)); //Den första listan ska användas till alla vanliga knappar
             MakeNTurnButton(); //Knappen för ny runda
+
+            round = 0;
+            life = 100;
+            money = 1000;
+            t1U0Cost = 450;
+            t2U0Cost = 600;
+            enemyCount = 0;
+            firstESpawned = false;
+            unitsWhenPlaying = new List<BaseUnit>();
+            previousKeyboardState = Keyboard.GetState();
+            spawnTime = 0;
+            temp = new List<BaseUnit>();
+            enemySpawners = new Queue<EnemySpawner>();
+            pState = new PlayingState();
+            selectedTower = new SelectedTower();
+            shootingTowers = new List<BaseTower>();
+            lostMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(200, 120), new Rectangle(200, 120, 400, 240));
         }
 
         public static void ContiniuePlaying() //Load Game
@@ -403,15 +423,23 @@ namespace Slutprojekt
         {
             pState = PlayingState.ended;
 
-            foreach(BaseUnit u in unitsWhenPlaying)
-            {
+            unitsWhenPlaying.Clear();
 
-            }
-            PartialMenu p = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu);
-            menuList.Add(p);
-            p.MenuObjects.Add(new MenuObjectText("YOU LOSE", new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Width / 2 + 100)));
+            menuList.Add(lostMenu);
+            lostMenu.MenuObjects.Add(new MenuObjectText("YOU LOSE", new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - 100, 150)));
+            lostMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(270, 250, 120, 100), GoToStartMenu)); //Meny
+            lostMenu.MenuObjects.Add(new MenuObjectText("Menu", new Vector2(280, 280)));
+            if(selectedTrack == SelectedTrack.Level1)
+                lostMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(410, 250, 150, 100), Game1.Game.StartLevel1)); //Starta om vid bana 1
+            else
+                lostMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(410, 250, 150, 100), Game1.Game.StartLevel2)); //Starta om vid bana 2
+            lostMenu.MenuObjects.Add(new MenuObjectText("Restart", new Vector2(420, 280)));
+            lostMenu.MenuObjects.Add(new MenuObjectButton(Assets.Exit, new Rectangle(560, 100, 60, 60), Game1.Game.Exit)); // Exit
+        }
 
-            menuList.Remove(p);
+        private static void GoToStartMenu()
+        {
+            Game1.Game.GameState = GameState.Menu;
         }
 
 

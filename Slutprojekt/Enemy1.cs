@@ -16,7 +16,7 @@ namespace Slutprojekt
             baseHp = 100;
             hp = baseHp * (int)roundModifier;
             maxHp = hp;
-            baseVelocity = 5.5f;
+            baseVelocity = 10.5f;
             velocity = baseVelocity * (0.5f * (roundModifier - 1) + 1);
             dmg = 20;
             gold = 50;

@@ -19,8 +19,7 @@ namespace Slutprojekt
         Menu,
         Playing,
         Settings,
-        Paused, 
-        Defeat
+        Paused
     }
 
     public enum MenuEnum //Startmeny knappar
@@ -65,15 +64,7 @@ namespace Slutprojekt
         private List<MenuObject> menuObjectsList;
 
 
-        public double Time
-        {
-            get { return time; }
-        }
-
-        public GraphicsDeviceManager Graphics
-        {
-            get { return graphics; }
-        }
+        
 
         public Game1()
         {
@@ -211,13 +202,13 @@ namespace Slutprojekt
             }
         }
 
-        private void StartLevel1()
+        public void StartLevel1()
         {
             gameState = GameState.Playing;
             Playing.StartPlaying(SelectedTrack.Level1, graphics);
         }
 
-        private void StartLevel2()
+        public void StartLevel2()
         {
             gameState = GameState.Playing;
             Playing.StartPlaying(SelectedTrack.Level2, graphics);
@@ -245,6 +236,23 @@ namespace Slutprojekt
             /*
              Kommer behöva: Map, runda, liv, pengar, Torn<>(positioner(x,y), texNamn, dmgCaused, projectileTex)
              */
+        }
+
+
+        public double Time
+        {
+            get { return time; }
+        }
+
+        public GameState GameState
+        {
+            get { return GameState; }
+            set { gameState = value; }
+        }
+
+        public GraphicsDeviceManager Graphics
+        {
+            get { return graphics; }
         }
     }
 }

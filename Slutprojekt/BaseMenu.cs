@@ -37,7 +37,10 @@ namespace Slutprojekt
 
         public virtual void Update()
         {
-
+            foreach (MenuObject o in menuObjects)
+            {
+                o.Update();
+            }
         }
     }
 }

@@ -15,13 +15,5 @@ namespace Slutprojekt
             tex = Assets.FrontMenuTex;
             menuObjects = objects;
         }
-
-        public override void Update()
-        {
-            foreach(MenuObject o in menuObjects)
-            {
-                o.Update();
-            }
-        }
     }
 }
