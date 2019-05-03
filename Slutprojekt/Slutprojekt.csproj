@@ -48,6 +48,7 @@
     <Compile Include="BaseUnit.cs" />
     <Compile Include="Circle.cs" />
     <Compile Include="FrontMenu.cs" />
+    <Compile Include="Line.cs" />
     <Compile Include="MenuObject.cs" />
     <Compile Include="MenuObjectButton.cs" />
     <Compile Include="MenuObjectText.cs" />

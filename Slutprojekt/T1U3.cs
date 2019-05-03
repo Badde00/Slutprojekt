@@ -11,11 +11,32 @@ namespace Slutprojekt
     {
         public T1U3(Vector2 zPos, int zDmgCaused)
         {
-            tex = Assets.T1U0;
             pos = zPos;
-            projectileTex = Assets.T1Projectile;
-
             dmgCaused = zDmgCaused;
+            Init();
+        }
+
+        public T1U3(Vector2 zPos)
+        {
+            pos = zPos;
+            dmgCaused = 0;
+            Init();
+        }
+
+        private void Init()
+        {
+            tex = Assets.T1U0;
+            projectileTex = Assets.T1Projectile;
+            hitbox = new Rectangle((int)pos.X, (int)pos.Y, 50, 50);
+            //description
+
+            aps = 0.8;
+            dmg = 40;
+            radius = 150;
+            pierce = 2;
+            projectileSpeed = 7.5f;
+            dArea = new Circle((int)pos.X, (int)pos.Y, radius);
+            targetMode = AttackMode.first;
         }
     }
 }

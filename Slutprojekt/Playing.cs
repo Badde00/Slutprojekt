@@ -75,6 +75,7 @@ namespace Slutprojekt
         private static BaseTower chosenT; //När jag har valt ett torn genom att klicka på det. För uppgradering och info om torn
         private static PartialMenu lostMenu; //Ska bara ha en och om jag gör den här så kan jag använda list.Remove(lostMenu);
         private static SelectedTrack selectedTrack; //För då jag ska starta om, så jag vet vilken bana
+        private static bool mouseOverTower;
         
 
         private static List<Vector2> enemiesTurningPoints1; //Vart fiender ska gå i bana 1
@@ -122,6 +123,7 @@ namespace Slutprojekt
             selectedTower = new SelectedTower();
             shootingTowers = new List<BaseTower>();
             lostMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(200, 120), new Rectangle(200, 120, 400, 240));
+            mouseOverTower = false;
         }
 
         public static void ContiniuePlaying() //Load Game
@@ -149,6 +151,9 @@ namespace Slutprojekt
 
                 if (life <= 0)
                     YouLose();
+
+                if (enemyCount == 0 && firstESpawned)
+                EndTurn();
 
                 foreach (BaseUnit u in unitsWhenPlaying) //Uppd. alla units
                 {
@@ -309,6 +314,7 @@ namespace Slutprojekt
                         else
                         {
                             enemyCount--;
+                            money += (u as BaseEnemy).Gold;
                         }
                     }
                     else if(u is Projectile)
@@ -329,13 +335,12 @@ namespace Slutprojekt
                 unitsWhenPlaying.Add(u);
             }
             temp.Clear();
-
-            if (enemyCount == 0 && firstESpawned)
-                EndTurn();
         }
 
         public static void PlaceTowers()
         {
+            CheckMouseOverTower();
+
             if (keyboardState.IsKeyUp(Keys.D1) && previousKeyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost) //Väljer torn. I draw så kollar den vilket torn som är valt och ritar det vi musen
             {
                 selectedTower = SelectedTower.Tower1;
@@ -351,14 +356,14 @@ namespace Slutprojekt
                 selectedTower = SelectedTower.Empty;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower1) //Placera torn
+            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower1 && !mouseOverTower) //Placera torn
             {
                 money -= t1U0Cost;
                 unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.X, mouseState.Y)));
                 selectedTower = SelectedTower.Empty;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower2) //Placera torn
+            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower2 && !mouseOverTower) //Placera torn
             {
                 money -= t2U0Cost;
                 unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y)));
@@ -372,6 +377,16 @@ namespace Slutprojekt
             firstESpawned = false;
             MakeNTurnButton();
             money += 100 + round * round * 10;
+
+            foreach(BaseUnit u in unitsWhenPlaying)
+            {
+                if (!(u is Projectile))
+                    temp.Add(u);
+            }
+            unitsWhenPlaying.Clear();
+            foreach (BaseUnit u in temp)
+                unitsWhenPlaying.Add(u);
+            temp.Clear();
         }
 
         public static void Draw(SpriteBatch spriteBatch)
@@ -384,8 +399,70 @@ namespace Slutprojekt
             foreach (BaseUnit u in unitsWhenPlaying)
             { u.Draw(spriteBatch); }
 
+            if (selectedTower != SelectedTower.Empty)
+            {
+                MouseDraw(spriteBatch);
+            }
+
             spriteBatch.DrawString(Assets.Text, "Life: " + life.ToString(), new Vector2(10, 70), Color.Black);
             spriteBatch.DrawString(Assets.Text, "$ " + money.ToString(), new Vector2(10, 130), Color.Black);
+        }
+
+        private static void MouseDraw(SpriteBatch spriteBatch)
+        {
+            CheckMouseOverTower();
+
+            if (selectedTower == SelectedTower.Tower1 && !mouseOverTower)
+            {
+                spriteBatch.Draw(Assets.T1U0, new Rectangle(mouseState.X, mouseState.Y, 50, 50), Color.White);
+            }
+            else if(selectedTower == SelectedTower.Tower2 && !mouseOverTower)
+            {
+                spriteBatch.Draw(Assets.T2U0, new Rectangle(mouseState.X, mouseState.Y, 50, 50), Color.White);
+            }
+            else if(selectedTower == SelectedTower.Tower1 && mouseOverTower)
+            {
+                spriteBatch.Draw(Assets.T1U0, new Rectangle(mouseState.X, mouseState.Y, 50, 50), new Color(Color.Red, 0.5f));
+            }
+            else
+            {
+                spriteBatch.Draw(Assets.T2U0, new Rectangle(mouseState.X, mouseState.Y, 50, 50), new Color(Color.Red, 0.5f));
+            }
+        }
+
+        private static void CheckMouseOverTower()
+        {
+            foreach (BaseUnit u in unitsWhenPlaying)
+            {
+                if (u is BaseTower)
+                {
+                    if (u.Hitbox.Intersects(new Rectangle(mouseState.X, mouseState.Y, 50, 50)))
+                    {
+                        mouseOverTower = true;
+                        break;
+                    }
+                    else
+                    {
+                        mouseOverTower = false;
+                    }
+                }
+            }
+        }
+
+        private static void MouseOverTrack()
+        {
+            Line line;
+
+            foreach(Vector2 point in tPoints)
+            {
+                if (tPoints.IndexOf(point) + 1 != tPoints.Count)
+                {
+                    line = new Line(point, tPoints[tPoints.IndexOf(point) + 1]);
+                }
+                else
+                    line = new Line();
+                
+            }
         }
 
         public static void MakeNTurnButton()
