@@ -84,6 +84,8 @@ namespace Slutprojekt
             private set { game = value; }
         }
 
+        Line test;
+        Rectangle rTest;
         protected override void Initialize()
         {
             base.Initialize();
@@ -95,6 +97,10 @@ namespace Slutprojekt
 
 
             MakeStartMenu();
+
+            //För test
+            test = new Line(new Vector2(3, 2), new Vector2(6, 5));
+            rTest = new Rectangle(new Point(1, 3), new Point(7, 6));
         }
         
         protected override void LoadContent()
@@ -136,8 +142,9 @@ namespace Slutprojekt
             {
                 Playing.Draw(spriteBatch);
                 spriteBatch.DrawString(Assets.Text, Mouse.GetState().Position.ToString(), new Vector2(10, 10), Color.Black);
-                
             }
+            //Test
+            spriteBatch.DrawString(Assets.Text, test.Intersect(rTest).ToString(), new Vector2(40), Color.Black);
             spriteBatch.End();
         }
         
