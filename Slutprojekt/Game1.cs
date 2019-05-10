@@ -99,8 +99,8 @@ namespace Slutprojekt
             MakeStartMenu();
 
             //För test
-            test = new Line(new Vector2(3, 2), new Vector2(6, 5));
-            rTest = new Rectangle(new Point(1, 3), new Point(7, 6));
+            test = new Line(new Vector2(2, 2), new Vector2(7, 2));
+            rTest = new Rectangle(new Point(0), new Point(5));
         }
         
         protected override void LoadContent()
@@ -145,6 +145,8 @@ namespace Slutprojekt
             }
             //Test
             spriteBatch.DrawString(Assets.Text, test.Intersect(rTest).ToString(), new Vector2(40), Color.Black);
+            spriteBatch.DrawString(Assets.Text, "t: " + test.t, new Vector2(70), Color.Black);
+            spriteBatch.DrawString(Assets.Text, "u: " + test.u, new Vector2(100), Color.Black);
             spriteBatch.End();
         }
         

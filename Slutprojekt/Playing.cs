@@ -76,6 +76,8 @@ namespace Slutprojekt
         private static PartialMenu lostMenu; //Ska bara ha en och om jag gör den här så kan jag använda list.Remove(lostMenu);
         private static SelectedTrack selectedTrack; //För då jag ska starta om, så jag vet vilken bana
         private static bool mouseOverTower;
+        private static bool mouseOverTrack;
+        private static List<Line> lineList;
         
 
         private static List<Vector2> enemiesTurningPoints1; //Vart fiender ska gå i bana 1
@@ -92,6 +94,7 @@ namespace Slutprojekt
             enemiesTurningPoints2 = new List<Vector2>();
             menuList = new List<PartialMenu>();
             MakeETP(); //Fyller enemiesTurningPoints 1&2
+            lineList = new List<Line>();
 
             if (s == SelectedTrack.Level1) //Den valda banan från Game1 startmenyn väljer bakgrundsbild och väljer vart fiender ska gå
             {
@@ -102,6 +105,7 @@ namespace Slutprojekt
                 tex = Assets.Bana2;
                 tPoints = enemiesTurningPoints2;
             }
+            MakeTrackLines();
 
             selectedTower = SelectedTower.Empty;
             menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank)); //Den första listan ska användas till alla vanliga knappar
@@ -124,6 +128,7 @@ namespace Slutprojekt
             shootingTowers = new List<BaseTower>();
             lostMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(200, 120), new Rectangle(200, 120, 400, 240));
             mouseOverTower = false;
+            mouseOverTrack = false;
         }
 
         public static void ContiniuePlaying() //Load Game
@@ -340,6 +345,7 @@ namespace Slutprojekt
         public static void PlaceTowers()
         {
             CheckMouseOverTower();
+            CheckMouseOverTrack();
 
             if (keyboardState.IsKeyUp(Keys.D1) && previousKeyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost) //Väljer torn. I draw så kollar den vilket torn som är valt och ritar det vi musen
             {
@@ -356,14 +362,14 @@ namespace Slutprojekt
                 selectedTower = SelectedTower.Empty;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower1 && !mouseOverTower) //Placera torn
+            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower1 && !mouseOverTower && !mouseOverTrack) //Placera torn
             {
                 money -= t1U0Cost;
                 unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.X, mouseState.Y)));
                 selectedTower = SelectedTower.Empty;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower2 && !mouseOverTower) //Placera torn
+            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower2 && !mouseOverTower && !mouseOverTrack) //Placera torn
             {
                 money -= t2U0Cost;
                 unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y)));
@@ -411,6 +417,7 @@ namespace Slutprojekt
         private static void MouseDraw(SpriteBatch spriteBatch)
         {
             CheckMouseOverTower();
+            CheckMouseOverTrack();
 
             if (selectedTower == SelectedTower.Tower1 && !mouseOverTower)
             {
@@ -436,7 +443,7 @@ namespace Slutprojekt
             {
                 if (u is BaseTower)
                 {
-                    if (u.Hitbox.Intersects(new Rectangle(mouseState.X, mouseState.Y, 50, 50)))
+                    if (u.Hitbox.Intersects(new Rectangle(mouseState.X - 10, mouseState.Y - 10, 70, 70)))
                     {
                         mouseOverTower = true;
                         break;
@@ -445,6 +452,18 @@ namespace Slutprojekt
                     {
                         mouseOverTower = false;
                     }
+                }
+            }
+        }
+
+        private static void CheckMouseOverTrack()
+        {
+            foreach (Line l in lineList)
+            {
+                if (l.Intersect(new Rectangle(mouseState.X - 10, mouseState.Y - 10, 70, 70)))
+                {
+                    mouseOverTrack = true;
+                    break;
                 }
             }
         }
@@ -494,6 +513,14 @@ namespace Slutprojekt
             enemiesTurningPoints2.Add(new Vector2(1, 1));
             enemiesTurningPoints2.Add(new Vector2(1, 1));
 
+        }
+
+        public static void MakeTrackLines()
+        {
+            for (int i = 0; i < tPoints.Count() - 1; i++)
+            {
+                lineList.Add(new Line(tPoints[i], tPoints[i + 1]));
+            } 
         }
 
         public static void YouLose()
