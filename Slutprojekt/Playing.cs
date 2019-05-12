@@ -14,12 +14,19 @@ namespace Slutprojekt
      */
 
      /*Att göra:
-      * Ej placera på bana
-      * Klicka på och välja 
-      * Bana 2
-      * Torn 2
-      * Torn uppgraderingar
-      * Fiende 2
+      * Interface
+      * Filhantering
+      * Kommentarer
+      * Api
+      * Generisk klass
+      * Generisk metod
+      * 
+      * Mindre viktigt, manual labour:
+      *     Klicka på och välja 
+      *     Bana 2
+      *     Torn 2
+      *     Torn uppgraderingar
+      *     Fiende 2
       */
 
     public enum PlayingState //Vilken state det spelande spelet är, för vad som ska uppdateras
