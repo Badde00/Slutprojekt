@@ -13,13 +13,6 @@ namespace Slutprojekt
         protected Texture2D tex;
         protected Vector2 pos;
         protected Rectangle hitbox;
-        protected string description;
-
-
-        public string Description
-        {
-            get { return description; }
-        }
 
         public Texture2D Tex
         {

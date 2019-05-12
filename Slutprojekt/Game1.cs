@@ -17,9 +17,7 @@ namespace Slutprojekt
     public enum GameState
     {
         Menu,
-        Playing,
-        Settings,
-        Paused
+        Playing
     }
 
     public enum MenuEnum //Startmeny knappar
@@ -84,8 +82,6 @@ namespace Slutprojekt
             private set { game = value; }
         }
 
-        Line test;
-        Rectangle rTest;
         protected override void Initialize()
         {
             base.Initialize();
@@ -97,10 +93,6 @@ namespace Slutprojekt
 
 
             MakeStartMenu();
-
-            //För test
-            test = new Line(new Vector2(2, 2), new Vector2(7, 2));
-            rTest = new Rectangle(new Point(0), new Point(5));
         }
         
         protected override void LoadContent()
@@ -141,17 +133,12 @@ namespace Slutprojekt
             } else if(gameState == GameState.Playing)
             {
                 Playing.Draw(spriteBatch);
-                spriteBatch.DrawString(Assets.Text, Mouse.GetState().Position.ToString(), new Vector2(10, 10), Color.Black);
             }
-            //Test
-            spriteBatch.DrawString(Assets.Text, test.Intersect(rTest).ToString(), new Vector2(40), Color.Black);
-            spriteBatch.DrawString(Assets.Text, "t: " + test.t, new Vector2(70), Color.Black);
-            spriteBatch.DrawString(Assets.Text, "u: " + test.u, new Vector2(100), Color.Black);
             spriteBatch.End();
         }
         
 
-        private void MakeStartMenu() //Inte klar. Måste fixa knappar först
+        private void MakeStartMenu()
         {
             gameState = GameState.Menu;
 
@@ -172,28 +159,15 @@ namespace Slutprojekt
         {
             if (gameState == GameState.Menu)
             {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                if (previousKeyboardState.IsKeyDown(Keys.Escape) && keyboardState.IsKeyUp(Keys.Escape))
                     Exit();
                 menu.Update();
             }
             else
-            if (gameState == GameState.Paused)
-            {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    gameState = GameState.Playing;
-            }
-            else
             if (gameState == GameState.Playing)
             {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    gameState = GameState.Paused;
                 Playing.Update(gameTime);
                 time += gameTime.ElapsedGameTime.TotalSeconds;
-            }
-            else //Settings
-            {
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    gameState = GameState.Menu;
             }
         }
 

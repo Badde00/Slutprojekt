@@ -13,7 +13,6 @@ namespace Slutprojekt
         public float u;
         private float n;
 
-        private Vector2 iPoint; //Punkten där linjer korsar
         private Vector2 t4; //som p2 för p3(Rektanglens hörn)
 
 
@@ -94,11 +93,6 @@ namespace Slutprojekt
         {
             get { return p2; }
             set { p2 = value; }
-        }
-
-        public Vector2 IPoint
-        {
-            get { return iPoint; }
         }
     }
 }

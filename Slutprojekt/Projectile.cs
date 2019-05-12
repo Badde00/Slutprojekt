@@ -32,7 +32,6 @@ namespace Slutprojekt
 
         public Projectile(int zPierce, float zSpeed, float zAngle, int zDmg, Texture2D zTex, Vector2 zPos, Rectangle zHitBox, Vector2 zDir)
         {
-            description = null; //projektilerna behöver ingen description
             isDead = false;
 
             pierce = zPierce;

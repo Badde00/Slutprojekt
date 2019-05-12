@@ -38,20 +38,17 @@ namespace Slutprojekt
 
         public int Radius
         {
-            get;
-            private set;
+            get { return radius; }
         }
 
         public int UpgradeCost
         {
-            get;
-            private set;
+            get { return upgradeCost; }
         }
 
         public int DmgCaused
         {
-            get;
-            private set;
+            get { return dmgCaused; }
         }
 
         public bool WillShoot
