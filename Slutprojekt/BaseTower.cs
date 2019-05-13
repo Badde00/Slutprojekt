@@ -49,6 +49,7 @@ namespace Slutprojekt
         public int DmgCaused
         {
             get { return dmgCaused; }
+            set { dmgCaused = value; }
         }
 
         public bool WillShoot

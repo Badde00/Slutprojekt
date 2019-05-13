@@ -12,28 +12,33 @@ namespace Slutprojekt
     {
         public T2U0(Vector2 zPos, int zDmgCaused)
         {
-            upgradeCost = 475;
-            tex = Assets.T2U0;
             pos = zPos;
-
-
-            //hitbox
-            projectileTex = Assets.T2Projectile;
+            dmgCaused = zDmgCaused;
+            Init();
         }
 
         public T2U0(Vector2 zPos)
         {
-            tex = Assets.T1U0;
             pos = zPos;
-            projectileTex = Assets.T1Projectile;
-            
-
-            upgradeCost = 350;
+            dmgCaused = 0;
+            Init();
         }
 
-        public override void Update()
+        private void Init()
         {
-            base.Update();
+            tex = Assets.T2U0;
+            projectileTex = Assets.T1Projectile;
+            hitbox = new Rectangle((int)pos.X, (int)pos.Y, 50, 50);
+            //description
+
+            upgradeCost = 500;
+            aps = 2.5;
+            dmg = 25;
+            radius = 100;
+            pierce = 1;
+            projectileSpeed = 9;
+            dArea = new Circle((int)pos.X, (int)pos.Y, radius);
+            targetMode = AttackMode.first;
         }
     }
 }

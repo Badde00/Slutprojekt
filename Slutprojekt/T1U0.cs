@@ -29,7 +29,6 @@ namespace Slutprojekt
             tex = Assets.T1U0;
             projectileTex = Assets.T1Projectile;
             hitbox = new Rectangle((int)pos.X, (int)pos.Y, 50, 50);
-            //description
 
             upgradeCost = 350;
             aps = 0.8;

@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 namespace Slutprojekt
 {
     /*Att fixa:
-     * Fiender ger ej pengar när de dör
+     * Uppgradera ändrar foreach
+     * uppgradering ändrar inte i unitswhenplaying
      */
 
      /*Att göra:
@@ -21,12 +22,13 @@ namespace Slutprojekt
       * Generisk klass
       * Generisk metod
       * 
-      * Mindre viktigt, manual labour:
-      *     Klicka på och välja 
+      * Mindre viktigt/manual labour:
+      *     Hur man skickar projektiler med instansen av det som sköt det
       *     Bana 2
-      *     Torn 2
       *     Torn uppgraderingar
       *     Fiende 2
+      *     Fiende 3
+      *     Attack mode
       */
 
     public enum PlayingState //Vilken state det spelande spelet är, för vad som ska uppdateras
@@ -160,8 +162,6 @@ namespace Slutprojekt
             {
                 RemoveDead(); //Tar bort döda fiender och projektiler samt avslutar rundan
 
-                SelectTower();
-
                 spawnTime += gameTime.ElapsedGameTime.TotalSeconds; //Räknar tiden mellan att fiender spawnar
 
                 if (enemySpawners.Count > 0 && spawnTime >= enemySpawners.Peek().time) //Spawnar nya fiender efter en tid
@@ -201,9 +201,11 @@ namespace Slutprojekt
                 }
             }
 
-            if(pState == PlayingState.playing || pState == PlayingState.start)
+            if(pState == PlayingState.playing || pState == PlayingState.start || pState == PlayingState.ended)
             {
                 PlaceTowers(); //Känner om du har valt ett torn och om du klickar för att placera det
+
+                UnselectTower();
 
                 SelectTower();
             }
@@ -213,8 +215,6 @@ namespace Slutprojekt
 
             if (willUnPause)
                 UnPause();
-
-            UnselectTower();
 
             foreach(BaseTower t in shootingTowers) //Skjuter
             {
@@ -463,7 +463,7 @@ namespace Slutprojekt
 
         public static void UnselectTower()
         {
-            if(previousMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released 
+            if(previousMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released && chosenT != null
                 && !(towerSelectedMenu.Size.Contains(mouseState.Position) || chosenT.Hitbox.Contains(mouseState.Position + new Point(5)))) //Har klickat och är utanför torn och meny
             {
                 chosenT = null;
@@ -478,45 +478,46 @@ namespace Slutprojekt
             {
                 money -= chosenT.UpgradeCost;
                 chosenT = new T1U1(chosenT.Pos, chosenT.DmgCaused);
-                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, Upgrade 1", new Vector2(280, 10));
+                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, 1", new Vector2(280, 10));
             }
             else if(chosenT is T1U1 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
                 chosenT = new T1U2(chosenT.Pos, chosenT.DmgCaused);
+                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, 2", new Vector2(280, 10));
             }
             else if (chosenT is T1U2 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
                 chosenT = new T1U3(chosenT.Pos, chosenT.DmgCaused);
+                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, 3", new Vector2(280, 10));
             }
             else if (chosenT is T1U3)
             {
                 towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Max Upgrade", new Vector2(290, 80)));
             }
-            /*else if (chosenT is T2U0 && money >= u.UpgradeCost)
+            else if (chosenT is T2U0 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
                 chosenT = new T2U1(chosenT.Pos, chosenT.DmgCaused);
+                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 2, 1", new Vector2(280, 10));
             }
             else if (chosenT is T2U1 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
                 chosenT = new T2U2(chosenT.Pos, chosenT.DmgCaused);
+                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 2, 2", new Vector2(280, 10));
             }
             else if (chosenT is T2U2 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
                 chosenT = new T2U3(chosenT.Pos, chosenT.DmgCaused);
+                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 2, 3", new Vector2(280, 10));
             }
             else if (chosenT is T2U3)
             {
-
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Max Upgrade", new Vector2(290, 80)));
             }
-            else
-            {
-
-            }*/
         }
 
         public static void EndTurn()
@@ -552,6 +553,7 @@ namespace Slutprojekt
 
             foreach (PartialMenu p in menuList)
             { p.Draw(spriteBatch, graphics); }
+
             
             spriteBatch.DrawString(Assets.Text, "Life: " + life.ToString(), new Vector2(10, 10), Color.Black);
             spriteBatch.DrawString(Assets.Text, "$ " + money.ToString(), new Vector2(10, 70), Color.Black);
