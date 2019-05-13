@@ -214,7 +214,7 @@ namespace Slutprojekt
             if (willUnPause)
                 UnPause();
 
-            
+            UnselectTower();
 
             foreach(BaseTower t in shootingTowers) //Skjuter
             {
@@ -439,30 +439,37 @@ namespace Slutprojekt
                             - 270, 0, 270, graphics.GraphicsDevice.Viewport.Height - 150));
 
             if (chosenT is T1U0)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, Base Tower", new Vector2(280, 10)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 1", new Vector2(575, 15)));
             if (chosenT is T1U1)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, Upgrade 1", new Vector2(280, 10)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 2", new Vector2(575, 15)));
             if (chosenT is T1U2)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, Upgrade 2", new Vector2(280, 10)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 3", new Vector2(575, 15)));
             if (chosenT is T1U3)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, Max Upgrade", new Vector2(280, 10)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, Max", new Vector2(575, 15)));
             if (chosenT is T2U0)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Base Tower", new Vector2(280, 10)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 1", new Vector2(575, 15)));
             if (chosenT is T2U1)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Upgrade 1", new Vector2(280, 10)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 2", new Vector2(575, 15)));
             if (chosenT is T2U2)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Upgrade 2", new Vector2(280, 10)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 3", new Vector2(575, 15)));
             if (chosenT is T2U3)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Max Upgrade", new Vector2(280, 10)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Max", new Vector2(575, 15)));
 
-            towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Damage Caused: " + (chosenT as BaseTower).DmgCaused, new Vector2(280, 50)));
-            towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(280, 80, 200, 110), UpgradeTower));
+            towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Dmg Done: " + (chosenT as BaseTower).DmgCaused, new Vector2(550, 65)));
+            towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(565, 110, 200, 110), UpgradeTower));
+            towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Upgrade", new Vector2(590, 145)));
             menuList.Add(towerSelectedMenu);
         }
 
         public static void UnselectTower()
         {
-
+            if(previousMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released 
+                && !(towerSelectedMenu.Size.Contains(mouseState.Position) || chosenT.Hitbox.Contains(mouseState.Position + new Point(5)))) //Har klickat och är utanför torn och meny
+            {
+                chosenT = null;
+                menuList.Remove(towerSelectedMenu);
+                towerSelectedMenu.MenuObjects.Clear();
+            }
         }
 
         public static void UpgradeTower()
@@ -540,9 +547,12 @@ namespace Slutprojekt
             if (selectedTower != SelectedTower.Empty)
             { MouseDraw(spriteBatch); }
 
+            if (chosenT != null)
+                spriteBatch.Draw(Assets.Circle, new Rectangle((int)chosenT.Pos.X - chosenT.Radius + 25, (int)chosenT.Pos.Y - chosenT.Radius + 25, chosenT.Radius * 2 + 25, chosenT.Radius * 2 + 25), Color.Black);
+
             foreach (PartialMenu p in menuList)
             { p.Draw(spriteBatch, graphics); }
-
+            
             spriteBatch.DrawString(Assets.Text, "Life: " + life.ToString(), new Vector2(10, 10), Color.Black);
             spriteBatch.DrawString(Assets.Text, "$ " + money.ToString(), new Vector2(10, 70), Color.Black);
         }

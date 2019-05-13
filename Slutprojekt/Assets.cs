@@ -32,6 +32,7 @@ namespace Slutprojekt
         private static Texture2D enemy2;
         private static Texture2D enemy3;
         private static Texture2D partialMenu;
+        private static Texture2D circle;
 
         public static void LoadContent(ContentManager content)
         {
@@ -57,6 +58,7 @@ namespace Slutprojekt
             enemy2 = content.Load<Texture2D>("Enemy2");
             enemy3 = content.Load<Texture2D>("Enemy3");
             partialMenu = content.Load<Texture2D>("PartialMenu");
+            circle = content.Load<Texture2D>("RangeCircle");
         }
 
         public static Texture2D PartialMenu { get { return partialMenu; } }
@@ -76,6 +78,8 @@ namespace Slutprojekt
         public static Texture2D Enemy3 { get { return enemy3; } }
 
         public static SpriteFont Text { get { return text; } }
+
+        public static Texture2D Circle { get { return circle; } }
 
         public static Texture2D Bana1
         {      

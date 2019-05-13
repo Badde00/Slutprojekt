@@ -43,5 +43,10 @@ namespace Slutprojekt
                 i.Draw(spriteBatch);
             }
         }
+
+        public Rectangle Size
+        {
+            get { return size; }
+        }
     }
 }
