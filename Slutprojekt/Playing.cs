@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Slutprojekt
 {
@@ -14,22 +15,24 @@ namespace Slutprojekt
      * uppgradering ändrar inte i unitswhenplaying
      */
 
-     /*Att göra:
-      * Interface
-      * Filhantering
-      * Kommentarer
-      * Api
-      * Generisk klass
-      * Generisk metod
-      * 
-      * Mindre viktigt/manual labour:
-      *     Hur man skickar projektiler med instansen av det som sköt det
-      *     Bana 2
-      *     Torn uppgraderingar
-      *     Fiende 2
-      *     Fiende 3
-      *     Attack mode
-      */
+    /*Att göra:
+     * Interface
+     * Filhantering
+     * Kommentarer
+     * Api
+     * Generisk klass
+     * Generisk metod
+     * 
+     * Mindre viktigt/manual labour:
+     *     Hur man skickar projektiler med instansen av det som sköt det
+     *     Bana 2
+     *     Torn uppgraderingar
+     *     Fiende 2
+     *     Fiende 3
+     *     Attack mode
+     */
+     
+    //api.openweathermap.org/data/2.5/forecast?id=524901&APPID=af8632ef1bec2c349fa2f2902007786b
 
     public enum PlayingState //Vilken state det spelande spelet är, för vad som ska uppdateras
     {
@@ -110,10 +113,12 @@ namespace Slutprojekt
             {
                 tex = Assets.Bana1;
                 tPoints = enemiesTurningPoints1;
+                selectedTrack = s;
             } else
             {
                 tex = Assets.Bana2;
                 tPoints = enemiesTurningPoints2;
+                selectedTrack = s;
             }
 
             selectedTower = SelectedTower.Empty;
@@ -173,7 +178,7 @@ namespace Slutprojekt
                     YouLose();
 
                 if (enemyCount == 0 && firstESpawned)
-                EndTurn();
+                    EndTurn();
 
                 foreach (BaseUnit u in unitsWhenPlaying) //Uppd. alla units
                 {
@@ -477,8 +482,11 @@ namespace Slutprojekt
             if (chosenT is T1U0 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
-                chosenT = new T1U1(chosenT.Pos, chosenT.DmgCaused);
-                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, 1", new Vector2(280, 10));
+                BaseTower b = new T1U1(chosenT.Pos, chosenT.DmgCaused);
+                //towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, 1", new Vector2(280, 10));
+                unitsWhenPlaying.Remove(chosenT);
+                unitsWhenPlaying.Add(b);
+                chosenT = b;
             }
             else if(chosenT is T1U1 && money >= chosenT.UpgradeCost)
             {
@@ -536,6 +544,21 @@ namespace Slutprojekt
             foreach (BaseUnit u in temp)
                 unitsWhenPlaying.Add(u);
             temp.Clear();
+        }
+
+        public static void Save()
+        {
+            StreamWriter sw = new StreamWriter("SlutprojektSave.txt");
+            sw.WriteLine(round.ToString());
+            sw.WriteLine(life.ToString());
+            sw.WriteLine(money.ToString());
+            sw.WriteLine(points.ToString());
+            sw.WriteLine((int)selectedTrack);
+            foreach(BaseUnit b in unitsWhenPlaying)
+            {
+
+            }
+            sw.Close();
         }
 
         public static void Draw(SpriteBatch spriteBatch)

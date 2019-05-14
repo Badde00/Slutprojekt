@@ -18,7 +18,6 @@ namespace Slutprojekt
         Vector2 texCenter;
         float angle;
         Vector2 dir;
-        BaseTower sentFrom
 
 
         public int Dmg
@@ -31,7 +30,7 @@ namespace Slutprojekt
             get { return isDead; }
         }
 
-        public Projectile(int zPierce, float zSpeed, float zAngle, int zDmg, Texture2D zTex, Vector2 zPos, Rectangle zHitBox, Vector2 zDir, BaseTower zSentFrom)
+        public Projectile(int zPierce, float zSpeed, float zAngle, int zDmg, Texture2D zTex, Vector2 zPos, Rectangle zHitBox, Vector2 zDir)
         {
             isDead = false;
 
@@ -42,7 +41,7 @@ namespace Slutprojekt
             pos = zPos;
             angle = zAngle;
             dir = zDir;
-            sentFrom = zSentFrom;
+            //sentFrom = zSentFrom;
 
             texCenter = new Vector2(tex.Width / 2, tex.Height / 2);
             hitbox = new Rectangle((int)zPos.X, (int)zPos.Y, 20, 20);
@@ -65,7 +64,7 @@ namespace Slutprojekt
                     {
                         enemiesHit.Add(e as BaseEnemy);
                         (e as BaseEnemy).Hp -= dmg;
-                        sentFrom.DmgCaused += dmg;
+                        //sentFrom.DmgCaused += dmg;
                     }
                 }
             }
