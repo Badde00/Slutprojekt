@@ -148,7 +148,6 @@ namespace Slutprojekt
             {
                 Playing.Draw(spriteBatch);
             }
-            spriteBatch.DrawString(Assets.Text, mouseState.Position.ToString(), new Vector2(200), Color.Black);
             spriteBatch.End();
         }
         

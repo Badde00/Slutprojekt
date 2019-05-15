@@ -24,7 +24,6 @@ namespace Slutprojekt
      * 
      * Mindre viktigt/manual labour:
      *     Hur man skickar projektiler med instansen av det som sköt det
-     *     Attack mode
      */
      
     //api.openweathermap.org/data/2.5/forecast?id=524901&APPID=af8632ef1bec2c349fa2f2902007786b
@@ -202,7 +201,7 @@ namespace Slutprojekt
                 if (life <= 0)
                     YouLose();
 
-                if (enemyCount == 0 && firstESpawned)
+                if (enemyCount == 0 && firstESpawned && enemySpawners.Count == 0)
                     EndTurn();
 
                 foreach (BaseUnit u in unitsWhenPlaying) //Uppd. alla units
@@ -328,6 +327,7 @@ namespace Slutprojekt
                     AddEnemy(1.5, new Enemy1(round, tPoints));
                     AddEnemy(0.5, new Enemy1(round, tPoints));
                     AddEnemy(1, new Enemy1(round, tPoints));
+                    AddEnemy(0.1, new Enemy3(round, tPoints));
                 }
                 else if (round == 8)
                 {
@@ -348,6 +348,7 @@ namespace Slutprojekt
                 }
                 else if (round == 10)
                 {
+                    AddEnemy(4, new Enemy3(round, tPoints));
                     AddEnemy(0.5, new Enemy1(round, tPoints));
                     AddEnemy(1.5, new Enemy1(round, tPoints));
                     AddEnemy(0.5, new Enemy1(round, tPoints));
@@ -367,6 +368,8 @@ namespace Slutprojekt
                     AddEnemy(0.3, new Enemy1(round, tPoints));
                     AddEnemy(2, new Enemy2(round, tPoints));
                     AddEnemy(2, new Enemy2(round, tPoints));
+                    if(round%3 == 0)
+                        AddEnemy(0.5, new Enemy3(round, tPoints));
                 }
                 else if (round < 1)
                 {
@@ -508,6 +511,28 @@ namespace Slutprojekt
                 towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Dmg Done: " + (chosenT as BaseTower).DmgCaused, new Vector2(550, 65)));
                 towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(565, 110, 200, 110), UpgradeTower));
                 towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Upgrade", new Vector2(590, 145)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectTex(Assets.Button, new Rectangle(590, 200, 150, 83))); //Ruta för attackmode
+                if (chosenT.Target == AttackMode.first) 
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("First", new Vector2(620, 220)));
+                else if (chosenT.Target == AttackMode.last)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Last", new Vector2(620, 220)));
+                else
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Strong", new Vector2(620, 220)));
+
+                if (chosenT.Target == AttackMode.first)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(540, 220, 40, 40), ToAMStrong));
+                else if (chosenT.Target == AttackMode.last)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(540, 220, 40, 40), ToAMFirst));
+                else
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(540, 220, 40, 40), ToAMLast));
+
+                if (chosenT.Target == AttackMode.first)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(747, 220, 40, 40), ToAMLast));
+                else if (chosenT.Target == AttackMode.last)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(747, 220, 40, 40), ToAMStrong));
+                else
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(747, 220, 40, 40), ToAMFirst));
+
             }
             else
             {
@@ -531,8 +556,29 @@ namespace Slutprojekt
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Max", new Vector2(45, 165)));
 
                 towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Dmg Done: " + (chosenT as BaseTower).DmgCaused, new Vector2(20, 215)));
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(15, 260, 200, 110), UpgradeTower));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(35, 260, 200, 110), UpgradeTower));
                 towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Upgrade", new Vector2(60, 295)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectTex(Assets.Button, new Rectangle(60, 350, 150, 83))); //Ruta för attackmode
+                if (chosenT.Target == AttackMode.first)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("First", new Vector2(90, 370)));
+                else if (chosenT.Target == AttackMode.last)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Last", new Vector2(90, 370)));
+                else
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Strong", new Vector2(90, 370)));
+
+                if (chosenT.Target == AttackMode.first)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(10, 370, 40, 40), ToAMStrong));
+                else if (chosenT.Target == AttackMode.last)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(10, 370, 40, 40), ToAMFirst));
+                else
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(10, 370, 40, 40), ToAMLast));
+
+                if (chosenT.Target == AttackMode.first)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(217, 370, 40, 40), ToAMLast));
+                else if (chosenT.Target == AttackMode.last)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(217, 370, 40, 40), ToAMStrong));
+                else
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(217, 370, 40, 40), ToAMFirst));
             }
             menuList.Add(towerSelectedMenu);
         } //TowerSelectedMenu
