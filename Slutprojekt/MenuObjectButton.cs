@@ -15,16 +15,10 @@ namespace Slutprojekt
         private MouseState state;
         private Func func;
 
-        public Vector2 MousePos
-        {
-            get;
-            private set;
-        }
 
         public MouseState State
         {
-            get;
-            private set;
+            get { return state; }
         }
 
         

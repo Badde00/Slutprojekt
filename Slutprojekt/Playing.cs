@@ -11,22 +11,19 @@ using System.IO;
 namespace Slutprojekt
 {
     /*Att fixa:
-     * Uppgradera ändrar foreach
-     * uppgradering ändrar inte i unitswhenplaying
      */
 
     /*Att göra:
-     * Interface
-     * Filhantering
      * Kommentarer
-     * Api
+     * Api - Senare
      * Generisk klass
      * Generisk metod
      * 
+     * Kolla Interface betygnivå
+     * Kolla om upgradering är polymorfism
+     * 
      * Mindre viktigt/manual labour:
      *     Hur man skickar projektiler med instansen av det som sköt det
-     *     Bana 2
-     *     Torn uppgraderingar
      *     Fiende 2
      *     Fiende 3
      *     Attack mode
@@ -92,6 +89,8 @@ namespace Slutprojekt
         private static bool mouseOverTower;
         private static int points;
         private static bool willUnPause;
+        private static bool maxPressed;
+        private static bool willMakeTSM;
         
 
         private static List<Vector2> enemiesTurningPoints1; //Vart fiender ska gå i bana 1
@@ -103,11 +102,7 @@ namespace Slutprojekt
         public static void StartPlaying(SelectedTrack s, GraphicsDeviceManager g) //Nytt Game
         {
             graphics = g; //Tar grafiken från Game1
-            pState = PlayingState.start;
-            enemiesTurningPoints1 = new List<Vector2>();
-            enemiesTurningPoints2 = new List<Vector2>();
-            menuList = new List<PartialMenu>();
-            MakeETP(); //Fyller enemiesTurningPoints 1&2
+            ForStarting();
 
             if (s == SelectedTrack.Level1) //Den valda banan från Game1 startmenyn väljer bakgrundsbild och väljer vart fiender ska gå
             {
@@ -120,6 +115,47 @@ namespace Slutprojekt
                 tPoints = enemiesTurningPoints2;
                 selectedTrack = s;
             }
+            round = 0;
+            life = 100;
+            money = 100000;
+            points = 0;
+        }
+
+        public static void ContiniuePlaying(int zPoints, int zLife, int zMoney, int zRound, SelectedTrack s, List<BaseTower> towerList, GraphicsDeviceManager g) //Load Game
+        {
+            graphics = g; //Tar grafiken från Game1
+            ForStarting();
+
+            if (s == SelectedTrack.Level1) //Den valda banan från Game1 startmenyn väljer bakgrundsbild och väljer vart fiender ska gå
+            {
+                tex = Assets.Bana1;
+                tPoints = enemiesTurningPoints1;
+                selectedTrack = s;
+            }
+            else
+            {
+                tex = Assets.Bana2;
+                tPoints = enemiesTurningPoints2;
+                selectedTrack = s;
+            }
+            round = zRound;
+            life = zLife;
+            money = zMoney;
+            points =  zPoints;
+            foreach(BaseTower t in towerList)
+            {
+                unitsWhenPlaying.Add(t);
+            }
+        }
+
+        public static void ForStarting()
+        {
+            pState = PlayingState.start;
+            enemiesTurningPoints1 = new List<Vector2>();
+            enemiesTurningPoints2 = new List<Vector2>();
+            menuList = new List<PartialMenu>();
+            towerSelectedMenu = new PartialMenu(new List<MenuObject>(), Assets.Blank, new Vector2(0), new Rectangle());
+            MakeETP(); //Fyller enemiesTurningPoints 1&2
 
             selectedTower = SelectedTower.Empty;
             menuList.Add(new PartialMenu(new List<MenuObject>(), Assets.Blank)); //Den första listan ska användas till alla vanliga knappar
@@ -131,9 +167,6 @@ namespace Slutprojekt
             pausedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(280, 220, 250, 130), WillUnPause));
             pausedMenu.MenuObjects.Add(new MenuObjectText("UnPause", new Vector2(310, 260)));
 
-            round = 0;
-            life = 100;
-            money = 1000;
             t1U0Cost = 450;
             t2U0Cost = 600;
             enemyCount = 0;
@@ -143,20 +176,14 @@ namespace Slutprojekt
             spawnTime = 0;
             temp = new List<BaseUnit>();
             enemySpawners = new Queue<EnemySpawner>();
-            pState = new PlayingState();
             selectedTower = new SelectedTower();
             shootingTowers = new List<BaseTower>();
             lostMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(200, 120), new Rectangle(200, 120, 400, 240));
             mouseOverTower = false;
-            points = 0;
             willUnPause = false;
+            maxPressed = false;
+            willMakeTSM = false;
         }
-
-        public static void ContiniuePlaying() //Load Game
-        {
-
-        }
-
 
         public static void Update(GameTime gameTime)
         {
@@ -217,6 +244,12 @@ namespace Slutprojekt
 
             foreach(PartialMenu p in menuList) //Uppd. alla menyer
                 p.Update();
+            if(willMakeTSM)
+            {
+                UnSelect();
+                MakeTSM();
+                willMakeTSM = false;
+            }
 
             if (willUnPause)
                 UnPause();
@@ -426,7 +459,8 @@ namespace Slutprojekt
             {
                 if (u is BaseTower)
                 {
-                    if (u.Hitbox.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed)
+                    if (u.Collide(mouseState.Position) && mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && 
+                        !towerSelectedMenu.Collide(mouseState.Position))
                     {
                         chosenT = u as BaseTower;
 
@@ -440,41 +474,76 @@ namespace Slutprojekt
 
         public static void MakeTSM()
         {
-            towerSelectedMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(0), new Rectangle(graphics.GraphicsDevice.Viewport.Width
-                            - 270, 0, 270, graphics.GraphicsDevice.Viewport.Height - 150));
+            if (chosenT.Pos.X <= graphics.GraphicsDevice.Viewport.Width - 270)
+            {
+                towerSelectedMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(0), new Rectangle(graphics.GraphicsDevice.Viewport.Width
+                                - 270, 0, 270, graphics.GraphicsDevice.Viewport.Height - 150));
 
-            if (chosenT is T1U0)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 1", new Vector2(575, 15)));
-            if (chosenT is T1U1)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 2", new Vector2(575, 15)));
-            if (chosenT is T1U2)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 3", new Vector2(575, 15)));
-            if (chosenT is T1U3)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, Max", new Vector2(575, 15)));
-            if (chosenT is T2U0)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 1", new Vector2(575, 15)));
-            if (chosenT is T2U1)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 2", new Vector2(575, 15)));
-            if (chosenT is T2U2)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 3", new Vector2(575, 15)));
-            if (chosenT is T2U3)
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Max", new Vector2(575, 15)));
+                if (chosenT is T1U0)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 1", new Vector2(575, 15)));
+                if (chosenT is T1U1)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 2", new Vector2(575, 15)));
+                if (chosenT is T1U2)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 3", new Vector2(575, 15)));
+                if (chosenT is T1U3)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, Max", new Vector2(575, 15)));
+                if (chosenT is T2U0)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 1", new Vector2(575, 15)));
+                if (chosenT is T2U1)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 2", new Vector2(575, 15)));
+                if (chosenT is T2U2)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 3", new Vector2(575, 15)));
+                if (chosenT is T2U3)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Max", new Vector2(575, 15)));
 
-            towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Dmg Done: " + (chosenT as BaseTower).DmgCaused, new Vector2(550, 65)));
-            towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(565, 110, 200, 110), UpgradeTower));
-            towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Upgrade", new Vector2(590, 145)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Dmg Done: " + (chosenT as BaseTower).DmgCaused, new Vector2(550, 65)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(565, 110, 200, 110), UpgradeTower));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Upgrade", new Vector2(590, 145)));
+            }
+            else
+            {
+                towerSelectedMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(0), new Rectangle(0, 150, 270, graphics.GraphicsDevice.Viewport.Height - 150));
+
+                if (chosenT is T1U0)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 1", new Vector2(45, 165)));
+                if (chosenT is T1U1)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 2", new Vector2(45, 165)));
+                if (chosenT is T1U2)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 3", new Vector2(45, 165)));
+                if (chosenT is T1U3)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, Max", new Vector2(45, 165)));
+                if (chosenT is T2U0)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 1", new Vector2(45, 165)));
+                if (chosenT is T2U1)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 2", new Vector2(45, 165)));
+                if (chosenT is T2U2)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, 3", new Vector2(45, 165)));
+                if (chosenT is T2U3)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Max", new Vector2(45, 165)));
+
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Dmg Done: " + (chosenT as BaseTower).DmgCaused, new Vector2(20, 215)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(15, 260, 200, 110), UpgradeTower));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Upgrade", new Vector2(60, 295)));
+            }
             menuList.Add(towerSelectedMenu);
-        }
+        } //TowerSelectedMenu
 
         public static void UnselectTower()
         {
             if(previousMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released && chosenT != null
-                && !(towerSelectedMenu.Size.Contains(mouseState.Position) || chosenT.Hitbox.Contains(mouseState.Position + new Point(5)))) //Har klickat och är utanför torn och meny
+                && !(towerSelectedMenu.Collide(mouseState.Position) || chosenT.Collide(mouseState.Position + new Point(5)))) //Har klickat och är utanför torn och meny
             {
                 chosenT = null;
-                menuList.Remove(towerSelectedMenu);
-                towerSelectedMenu.MenuObjects.Clear();
+                UnSelect();
             }
+        }
+
+        public static void UnSelect()
+        {
+            maxPressed = false;
+            menuList.Remove(towerSelectedMenu);
+            towerSelectedMenu = new PartialMenu(new List<MenuObject>(), Assets.Blank, new Vector2(), new Rectangle());
+            towerSelectedMenu.MenuObjects.Clear();
         }
 
         public static void UpgradeTower()
@@ -483,48 +552,63 @@ namespace Slutprojekt
             {
                 money -= chosenT.UpgradeCost;
                 BaseTower b = new T1U1(chosenT.Pos, chosenT.DmgCaused);
-                //towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, 1", new Vector2(280, 10));
                 unitsWhenPlaying.Remove(chosenT);
                 unitsWhenPlaying.Add(b);
                 chosenT = b;
+                willMakeTSM = true;
             }
             else if(chosenT is T1U1 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
-                chosenT = new T1U2(chosenT.Pos, chosenT.DmgCaused);
-                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, 2", new Vector2(280, 10));
+                BaseTower b = new T1U2(chosenT.Pos, chosenT.DmgCaused);
+                unitsWhenPlaying.Remove(chosenT);
+                unitsWhenPlaying.Add(b);
+                chosenT = b;
+                willMakeTSM = true;
             }
             else if (chosenT is T1U2 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
-                chosenT = new T1U3(chosenT.Pos, chosenT.DmgCaused);
-                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 1, 3", new Vector2(280, 10));
+                BaseTower b = new T1U3(chosenT.Pos, chosenT.DmgCaused);
+                unitsWhenPlaying.Remove(chosenT);
+                unitsWhenPlaying.Add(b);
+                chosenT = b;
+                willMakeTSM = true;
             }
             else if (chosenT is T1U3)
             {
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Max Upgrade", new Vector2(290, 80)));
+                maxPressed = true;
             }
             else if (chosenT is T2U0 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
-                chosenT = new T2U1(chosenT.Pos, chosenT.DmgCaused);
-                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 2, 1", new Vector2(280, 10));
+                BaseTower b = new T2U1(chosenT.Pos, chosenT.DmgCaused);
+                unitsWhenPlaying.Remove(chosenT);
+                unitsWhenPlaying.Add(b);
+                chosenT = b;
+                willMakeTSM = true;
             }
             else if (chosenT is T2U1 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
-                chosenT = new T2U2(chosenT.Pos, chosenT.DmgCaused);
-                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 2, 2", new Vector2(280, 10));
+                BaseTower b = new T2U2(chosenT.Pos, chosenT.DmgCaused);
+                unitsWhenPlaying.Remove(chosenT);
+                unitsWhenPlaying.Add(b);
+                chosenT = b;
+                willMakeTSM = true;
             }
             else if (chosenT is T2U2 && money >= chosenT.UpgradeCost)
             {
                 money -= chosenT.UpgradeCost;
-                chosenT = new T2U3(chosenT.Pos, chosenT.DmgCaused);
-                towerSelectedMenu.MenuObjects[0] = new MenuObjectText("Tower 2, 3", new Vector2(280, 10));
+                BaseTower b = new T2U3(chosenT.Pos, chosenT.DmgCaused);
+                unitsWhenPlaying.Remove(chosenT);
+                unitsWhenPlaying.Add(b);
+                chosenT = b;
+                willMakeTSM = true;
             }
             else if (chosenT is T2U3)
             {
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Max Upgrade", new Vector2(290, 80)));
+                maxPressed = true;
             }
         }
 
@@ -544,19 +628,58 @@ namespace Slutprojekt
             foreach (BaseUnit u in temp)
                 unitsWhenPlaying.Add(u);
             temp.Clear();
+            Save();
         }
 
         public static void Save()
         {
             StreamWriter sw = new StreamWriter("SlutprojektSave.txt");
-            sw.WriteLine(round.ToString());
-            sw.WriteLine(life.ToString());
-            sw.WriteLine(money.ToString());
-            sw.WriteLine(points.ToString());
+            sw.WriteLine(Game1.Game.Highscore);
+            sw.WriteLine(points);
+            sw.WriteLine(life);
+            sw.WriteLine(money);
+            sw.WriteLine(round);
             sw.WriteLine((int)selectedTrack);
             foreach(BaseUnit b in unitsWhenPlaying)
             {
-
+                if (b is BaseTower)
+                {
+                    sw.WriteLine(b.Pos.X);
+                    sw.WriteLine(b.Pos.Y);
+                    sw.WriteLine((b as BaseTower).DmgCaused);
+                    if (b is T1U0)
+                    {
+                        sw.WriteLine("T1U0");
+                    }
+                    else if (b is T1U1)
+                    {
+                        sw.WriteLine("T1U1");
+                    }
+                    else if (b is T1U2)
+                    {
+                        sw.WriteLine("T1U2");
+                    }
+                    else if (b is T1U3)
+                    {
+                        sw.WriteLine("T1U3");
+                    }
+                    else if (b is T2U0)
+                    {
+                        sw.WriteLine("T2U0");
+                    }
+                    else if (b is T2U1)
+                    {
+                        sw.WriteLine("T2U1");
+                    }
+                    else if (b is T2U2)
+                    {
+                        sw.WriteLine("T2U2");
+                    }
+                    else if (b is T2U3)
+                    {
+                        sw.WriteLine("T2U3");
+                    }
+                }
             }
             sw.Close();
         }
@@ -572,7 +695,11 @@ namespace Slutprojekt
             { MouseDraw(spriteBatch); }
 
             if (chosenT != null)
+            {
                 spriteBatch.Draw(Assets.Circle, new Rectangle((int)chosenT.Pos.X - chosenT.Radius + 25, (int)chosenT.Pos.Y - chosenT.Radius + 25, chosenT.Radius * 2 + 25, chosenT.Radius * 2 + 25), Color.Black);
+                if(maxPressed)
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Max Upgrade", new Vector2(290, 80)));
+            }
 
             foreach (PartialMenu p in menuList)
             { p.Draw(spriteBatch, graphics); }
@@ -610,7 +737,7 @@ namespace Slutprojekt
             {
                 if (u is BaseTower)
                 {
-                    if (u.Hitbox.Intersects(new Rectangle(mouseState.X - 10, mouseState.Y - 10, 70, 70)))
+                    if (u.Collide(new Rectangle(mouseState.X - 10, mouseState.Y - 10, 70, 70)))
                     {
                         mouseOverTower = true;
                         break;
@@ -646,11 +773,28 @@ namespace Slutprojekt
             enemiesTurningPoints1.Add(new Vector2(239, 379));
             enemiesTurningPoints1.Add(new Vector2(154, 363));
             enemiesTurningPoints1.Add(new Vector2(192, 53));
-            enemiesTurningPoints2.Add(new Vector2(1, 1));
-            enemiesTurningPoints2.Add(new Vector2(1, 1));
-            enemiesTurningPoints2.Add(new Vector2(1, 1));
-            enemiesTurningPoints2.Add(new Vector2(1, 1));
-            enemiesTurningPoints2.Add(new Vector2(1, 1));
+
+            enemiesTurningPoints2.Add(new Vector2(582, 431));
+            enemiesTurningPoints2.Add(new Vector2(598, 347));
+            enemiesTurningPoints2.Add(new Vector2(713, 345));
+            enemiesTurningPoints2.Add(new Vector2(769, 326));
+            enemiesTurningPoints2.Add(new Vector2(780, 284));
+            enemiesTurningPoints2.Add(new Vector2(732, 238));
+            enemiesTurningPoints2.Add(new Vector2(672, 233));
+            enemiesTurningPoints2.Add(new Vector2(547, 234));
+            enemiesTurningPoints2.Add(new Vector2(541, 157));
+            enemiesTurningPoints2.Add(new Vector2(721, 153));
+            enemiesTurningPoints2.Add(new Vector2(715, 44));
+            enemiesTurningPoints2.Add(new Vector2(85, 43));
+            enemiesTurningPoints2.Add(new Vector2(79, 147));
+            enemiesTurningPoints2.Add(new Vector2(279, 154));
+            enemiesTurningPoints2.Add(new Vector2(369, 164));
+            enemiesTurningPoints2.Add(new Vector2(399, 233));
+            enemiesTurningPoints2.Add(new Vector2(385, 293));
+            enemiesTurningPoints2.Add(new Vector2(336, 318));
+            enemiesTurningPoints2.Add(new Vector2(266, 314));
+            enemiesTurningPoints2.Add(new Vector2(199, 327));
+            enemiesTurningPoints2.Add(new Vector2(184, 393));
 
         }
 

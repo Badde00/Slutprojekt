@@ -10,7 +10,7 @@ namespace Slutprojekt
 {
     class PartialMenu : BaseMenu
     {
-        private Rectangle size;
+        private Rectangle hitbox;
         private Vector2 pos;
 
         public PartialMenu(List<MenuObject> objects, Texture2D zTex)
@@ -24,18 +24,18 @@ namespace Slutprojekt
             tex = zTex;
             menuObjects = objects;
             pos = zPos;
-            size = zSize;
+            hitbox = zSize;
         }
 
         public override void Draw(SpriteBatch spriteBatch, GraphicsDeviceManager g)
         {
-            if (size == new Rectangle(0, 0, 0, 0))
+            if (hitbox == new Rectangle(0, 0, 0, 0))
             {
                 base.Draw(spriteBatch, g);
             }
             else
             {
-                spriteBatch.Draw(tex, size, Color.White);
+                spriteBatch.Draw(tex, hitbox, Color.White);
             }
 
             foreach (MenuObject i in menuObjects)
@@ -44,9 +44,24 @@ namespace Slutprojekt
             }
         }
 
-        public Rectangle Size
+        public bool Collide(Rectangle h)
         {
-            get { return size; }
+            return hitbox.Intersects(h) ? true : false;
+        }
+
+        public bool Collide(Vector2 p)
+        {
+            return hitbox.Contains(p) ? true : false;
+        }
+
+        public bool Collide(Point p)
+        {
+            return hitbox.Contains(p) ? true : false;
+        }
+
+        public Rectangle Hitbox
+        {
+            get { return hitbox; }
         }
     }
 }

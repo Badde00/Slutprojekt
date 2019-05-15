@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Slutprojekt
 {
@@ -26,15 +26,11 @@ namespace Slutprojekt
 
     public enum SelectedTrack //Vilken bana som väljs
     {
-        Level1,
+        Level1 = 1,
         Level2
     }
 
     delegate void Func();
-
-    /*För ev cirkel+collision, fråga tim först:
-     https://stackoverflow.com/questions/24559585/how-to-create-a-circle-variable-in-monogame-and-detect-collision-with-other-circ
-     */
 
     public class Game1 : Game 
     {
@@ -54,6 +50,18 @@ namespace Slutprojekt
         private Vector2 loadButton; //Så om man vill flytta knappen så flyttas texten med
         private Vector2 aboutButton;
         private List<MenuObject> menuObjectsList;
+        private static int highscore;
+        private static StreamReader sr;
+        private static int pPoints;
+        private static int pLife;
+        private static int pMoney;
+        private static int pRound;
+        private static int pSTrack;
+        private static float pX;
+        private static float pY;
+        private static Vector2 pTPos;
+        private static int pDmg;
+        private static List<BaseTower> pTowers;
 
 
         
@@ -84,15 +92,19 @@ namespace Slutprojekt
             loadButton = new Vector2(135, 220);
             aboutButton = new Vector2(425, 220);
             menuObjectsList = new List<MenuObject>();
-
-
-            /*var client = new RestClient("api.openweathermap.org/data/2.5/forecast?id=524901&APPID=af8632ef1bec2c349fa2f2902007786b");
-            var request = new RestRequest("/", Method.GET);
-            IRestResponse response = client.Execute(request);
-            String content = response.Content;
-            WeatherMain weatherMain = JsonConvert.DeserializeObject<WeatherMain>(content);*/
-
-
+            pTowers = new List<BaseTower>();
+            try
+            {
+                sr = new StreamReader("SlutprojektSave.txt");
+                string rad = "";
+                if ((rad = sr.ReadLine()) != null)
+                    highscore = int.Parse(rad);
+                sr.Close();
+            }
+            catch
+            {
+                highscore = 0;
+            }
 
             MakeStartMenu();
         }
@@ -101,7 +113,6 @@ namespace Slutprojekt
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Assets.LoadContent(Content);
-            
         }
 
 
@@ -132,10 +143,12 @@ namespace Slutprojekt
             if (gameState == GameState.Menu)
             {
                 menu.Draw(spriteBatch, graphics);
+                spriteBatch.DrawString(Assets.Text, "Highscore: " + highscore, new Vector2(50, 40), Color.Black);
             } else if(gameState == GameState.Playing)
             {
                 Playing.Draw(spriteBatch);
             }
+            spriteBatch.DrawString(Assets.Text, mouseState.Position.ToString(), new Vector2(200), Color.Black);
             spriteBatch.End();
         }
         
@@ -152,8 +165,7 @@ namespace Slutprojekt
             menuObjectsList.Add(new MenuObjectButton(Assets.Button, new Rectangle((int)aboutButton.X, (int)aboutButton.Y, 225, 225), OpenAbout)); //About
             menuObjectsList.Add(new MenuObjectText("About", new Vector2(aboutButton.X + 50, aboutButton.Y + 90)));
             menuObjectsList.Add(new MenuObjectButton(Assets.Exit, new Rectangle(graphics.GraphicsDevice.Viewport.Width - 100, 0, 100, 100), Exit)); //Exit
-            menuObjectsList.Add(new MenuObjectButton(Assets.Settings, new Rectangle(graphics.GraphicsDevice.Viewport.Width - 100, 
-                graphics.GraphicsDevice.Viewport.Height - 100, 100, 100), OpenSettings)); //Settings
+            
             menu = new FrontMenu(menuObjectsList);
         }
 
@@ -185,28 +197,88 @@ namespace Slutprojekt
             Playing.StartPlaying(SelectedTrack.Level2, graphics);
         }
 
-        private void LoadGame() //Gör senare
+        private void LoadGame()
         {
+            try
+            {
+                sr = new StreamReader("SlutprojektSave.txt");
+                string rad = "";
+                sr.ReadLine(); //Första raden är highscore
+                if ((rad = sr.ReadLine()) != null) //points
+                    pPoints = int.Parse(rad);
+                if ((rad = sr.ReadLine()) != null) //life
+                    pLife = int.Parse(rad);
+                if ((rad = sr.ReadLine()) != null) //money
+                    pMoney = int.Parse(rad);
+                if ((rad = sr.ReadLine()) != null) //round
+                    pRound = int.Parse(rad);
+                if ((rad = sr.ReadLine()) != null) //selectedTrack (Lvl 1 = 1, Lvl 2 = 2)
+                    pSTrack = int.Parse(rad);
+                while ((rad = sr.ReadLine()) != null)
+                {
+                    pX = float.Parse(rad);
+                    if ((rad = sr.ReadLine()) != null)
+                        pY = float.Parse(rad);
+                    if ((rad = sr.ReadLine()) != null)
+                        pDmg = int.Parse(rad);
+                    if ((rad = sr.ReadLine()) != null)
+                    {
+                        if(rad == "T1U0")
+                        {
+                            pTowers.Add(new T1U0(new Vector2(pX, pY), pDmg));
+                        }
+                        else if (rad == "T1U1")
+                        {
+                            pTowers.Add(new T1U1(new Vector2(pX, pY), pDmg));
+                        }
+                        else if(rad == "T1U2")
+                        {
+                            pTowers.Add(new T1U2(new Vector2(pX, pY), pDmg));
+                        }
+                        else if(rad == "T1U3")
+                        {
+                            pTowers.Add(new T1U3(new Vector2(pX, pY), pDmg));
+                        }
+                        else if(rad == "T2U0")
+                        {
+                            pTowers.Add(new T2U0(new Vector2(pX, pY), pDmg));
+                        }
+                        else if(rad == "T2U1")
+                        {
+                            pTowers.Add(new T2U1(new Vector2(pX, pY), pDmg));
+                        }
+                        else if(rad == "T2U2")
+                        {
+                            pTowers.Add(new T2U2(new Vector2(pX, pY), pDmg));
+                        }
+                        else if(rad == "T2U3")
+                        {
+                            pTowers.Add(new T2U3(new Vector2(pX, pY), pDmg));
+                        }
+                    }
+                }
+                    sr.Close();
 
+                if (pSTrack == 1)
+                {
+                    gameState = GameState.Playing;
+                    Playing.ContiniuePlaying(pPoints, pLife, pMoney, pRound, SelectedTrack.Level1, pTowers, graphics);
+                }
+                else if(pSTrack == 2)
+                {
+                    gameState = GameState.Playing;
+                    Playing.ContiniuePlaying(pPoints, pLife, pMoney, pRound, SelectedTrack.Level2, pTowers, graphics);
+                }
+            }
+            catch
+            {
+
+            }
         }
 
         private void OpenAbout() //Gör senare
         {
 
-        }
-
-        private void OpenSettings() //Gör senare
-        {
-
-        }
-
-        
-
-        private void Save()
-        {
-            /*
-             Kommer behöva: Map, runda, liv, pengar, Torn<>(positioner(x,y), texNamn, dmgCaused, projectileTex)
-             */
         }
 
 
@@ -225,81 +297,19 @@ namespace Slutprojekt
         {
             get { return graphics; }
         }
+
+        public int Highscore
+        {
+            get { return highscore; }
+        }
     }
 
-    public class WeatherMain
+    interface ICollision
     {
-        public double temp { get; set; }
-        public double temp_min { get; set; }
-        public double temp_max { get; set; }
-        public double pressure { get; set; }
-        public double sea_level { get; set; }
-        public double grnd_level { get; set; }
-        public int humidity { get; set; }
-        public double temp_kf { get; set; }
-    }
+        bool Collide(Rectangle hitBox);
 
-    public class Weather
-    {
-        public int id { get; set; }
-        public string main { get; set; }
-        public string description { get; set; }
-        public string icon { get; set; }
-    }
+        bool Collide(Vector2 pos);
 
-    public class Clouds
-    {
-        public int all { get; set; }
-    }
-
-    public class Wind
-    {
-        public double speed { get; set; }
-        public double deg { get; set; }
-    }
-
-    public class Sys
-    {
-        public string pod { get; set; }
-    }
-
-    public class Rain
-    {
-        public double __invalid_name__3h { get; set; }
-    }
-
-    public class List
-    {
-        public int dt { get; set; }
-        public WeatherMain weatherMain { get; set; }
-        public List<Weather> weather { get; set; }
-        public Clouds clouds { get; set; }
-        public Wind wind { get; set; }
-        public Sys sys { get; set; }
-        public string dt_txt { get; set; }
-        public Rain rain { get; set; }
-    }
-
-    public class Coord
-    {
-        public double lat { get; set; }
-        public double lon { get; set; }
-    }
-
-    public class City
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public Coord coord { get; set; }
-        public string country { get; set; }
-    }
-
-    public class RootObject
-    {
-        public string cod { get; set; }
-        public double message { get; set; }
-        public int cnt { get; set; }
-        public List<List> list { get; set; }
-        public City city { get; set; }
+        bool Collide(Point pos);
     }
 }
