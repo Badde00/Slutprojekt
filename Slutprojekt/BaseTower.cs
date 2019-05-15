@@ -57,6 +57,12 @@ namespace Slutprojekt
             get { return willShoot; }
         }
 
+        public AttackMode Target
+        {
+            get { return targetMode; }
+            set { targetMode = value; }
+        }
+
         public virtual void Shoot()
         {
             willShoot = false;

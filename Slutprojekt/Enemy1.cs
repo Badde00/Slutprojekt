@@ -10,19 +10,19 @@ namespace Slutprojekt
 {
     class Enemy1 : BaseEnemy
     {
-        public Enemy1(int round, Texture2D zTex, List<Vector2> tPoints)
+        public Enemy1(int round, List<Vector2> tPoints)
         {
             roundModifier = 1 + ((round * round) / 100);
-            baseHp = 100;
+            baseHp = 200;
             hp = baseHp * (int)roundModifier;
             maxHp = hp;
-            baseVelocity = 2f;
-            velocity = baseVelocity * (0.5f * (roundModifier - 1) + 1);
-            dmg = 20;
+            baseVelocity = 2.25f;
+            velocity = baseVelocity * (0.75f * (roundModifier - 1) + 1);
+            dmg = 15;
             gold = 50;
             dangerLevel = hp + 2 * dmg + (int)velocity / 2;
             turningPoints = tPoints;
-            tex = zTex;
+            tex = Assets.Enemy1;
             pos = new Vector2(turningPoints[0].X, turningPoints[0].Y);
             hitbox = new Rectangle((int)pos.X, (int)pos.Y, 50, 50);
             direction = CalcDirection(pos, turningPoints[currentTurningPoint + 1]);

@@ -301,6 +301,7 @@ namespace Slutprojekt
         public int Highscore
         {
             get { return highscore; }
+            set { highscore = value; }
         }
     }
 

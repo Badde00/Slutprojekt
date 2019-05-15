@@ -24,8 +24,6 @@ namespace Slutprojekt
      * 
      * Mindre viktigt/manual labour:
      *     Hur man skickar projektiler med instansen av det som sköt det
-     *     Fiende 2
-     *     Fiende 3
      *     Attack mode
      */
      
@@ -284,80 +282,91 @@ namespace Slutprojekt
             {
                 if (round == 1)
                 {
-                    AddEnemy(0.5, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1.5, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(0.5, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy1(round, tPoints));
                 }
                 else if (round == 2)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy1(round, tPoints));
                 }
                 else if (round == 3)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy1(round, tPoints));
                 }
                 else if (round == 4)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy1(round, tPoints));
                 }
                 else if (round == 5)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1.5, new Enemy2(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy1(round, tPoints));
                 }
                 else if (round == 6)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy2(round, tPoints));
                 }
                 else if (round == 7)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy2(round, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy1(round, tPoints));
                 }
                 else if (round == 8)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy2(round, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy2(round, tPoints));
                 }
                 else if (round == 9)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy2(round, tPoints));
+                    AddEnemy(0.3, new Enemy2(round, tPoints));
+                    AddEnemy(0.3, new Enemy2(round, tPoints));
+                    AddEnemy(0.3, new Enemy2(round, tPoints));
+                    AddEnemy(1, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.7, new Enemy1(round, tPoints));
                 }
                 else if (round == 10)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(1, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy2(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
                 }
                 else if (round > 10)
                 {
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
-                    AddEnemy(1, new Enemy1(round, Assets.Enemy1, tPoints));
+                    AddEnemy(0.5, new Enemy2(round, tPoints));
+                    AddEnemy(1.5, new Enemy2(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.3, new Enemy1(round, tPoints));
+                    AddEnemy(0.3, new Enemy1(round, tPoints));
+                    AddEnemy(2, new Enemy2(round, tPoints));
+                    AddEnemy(2, new Enemy2(round, tPoints));
                 }
                 else if (round < 1)
                 {
@@ -612,6 +621,33 @@ namespace Slutprojekt
             }
         }
 
+        public static void ToAMStrong() //To attackmode: Strong
+        {
+            willMakeTSM = true;
+            BaseTower b = chosenT;
+            b.Target = AttackMode.strong;
+            unitsWhenPlaying.Remove(chosenT);
+            unitsWhenPlaying.Add(b);
+        }
+
+        public static void ToAMLast()
+        {
+            willMakeTSM = true;
+            BaseTower b = chosenT;
+            b.Target = AttackMode.last;
+            unitsWhenPlaying.Remove(chosenT);
+            unitsWhenPlaying.Add(b);
+        }
+
+        public static void ToAMFirst()
+        {
+            willMakeTSM = true;
+            BaseTower b = chosenT;
+            b.Target = AttackMode.first;
+            unitsWhenPlaying.Remove(chosenT);
+            unitsWhenPlaying.Add(b);
+        }
+
         public static void EndTurn()
         {
             pState = PlayingState.ended;
@@ -628,6 +664,8 @@ namespace Slutprojekt
             foreach (BaseUnit u in temp)
                 unitsWhenPlaying.Add(u);
             temp.Clear();
+            if (points > Game1.Game.Highscore)
+                Game1.Game.Highscore = points;
             Save();
         }
 
