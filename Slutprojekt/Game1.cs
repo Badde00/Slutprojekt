@@ -50,6 +50,7 @@ namespace Slutprojekt
         private Vector2 loadButton; //Så om man vill flytta knappen så flyttas texten med
         private Vector2 aboutButton;
         private List<MenuObject> menuObjectsList;
+        private static PartialMenu aboutMenu;
         private static int highscore;
         private static StreamReader sr;
         private static int pPoints;
@@ -148,6 +149,8 @@ namespace Slutprojekt
             {
                 Playing.Draw(spriteBatch);
             }
+            if (aboutMenu != null)
+                aboutMenu.Draw(spriteBatch, graphics);
             spriteBatch.End();
         }
         
@@ -170,18 +173,24 @@ namespace Slutprojekt
 
         private void GameStateUpdate(GameTime gameTime)
         {
-            if (gameState == GameState.Menu)
+            if (aboutMenu == null)
             {
-                if (previousKeyboardState.IsKeyDown(Keys.Escape) && keyboardState.IsKeyUp(Keys.Escape))
-                    Exit();
-                menu.Update();
+                if (gameState == GameState.Menu)
+                {
+                    if (previousKeyboardState.IsKeyDown(Keys.Escape) && keyboardState.IsKeyUp(Keys.Escape))
+                        Exit();
+                    menu.Update();
+                }
+                else
+                if (gameState == GameState.Playing)
+                {
+                    Playing.Update(gameTime);
+                    time += gameTime.ElapsedGameTime.TotalSeconds;
+                }
             }
             else
-            if (gameState == GameState.Playing)
-            {
-                Playing.Update(gameTime);
-                time += gameTime.ElapsedGameTime.TotalSeconds;
-            }
+            if (aboutMenu != null && keyboardState.IsKeyUp(Keys.Back) && previousKeyboardState.IsKeyDown(Keys.Back))
+                aboutMenu = null;
         }
 
         public void StartLevel1()
@@ -275,9 +284,17 @@ namespace Slutprojekt
             }
         }
 
-        private void OpenAbout() //Gör senare
+        private void OpenAbout()
         {
-
+            aboutMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu);
+            aboutMenu.MenuObjects.Add(new MenuObjectText("Game made by Alfons Flystam. ", new Vector2(140, 20)));
+            aboutMenu.MenuObjects.Add(new MenuObjectText("When you start a game, ", new Vector2(40, 60)));
+            aboutMenu.MenuObjects.Add(new MenuObjectText("enemies will spawn at a gate", new Vector2(40, 100)));
+            aboutMenu.MenuObjects.Add(new MenuObjectText("at the bottom of the screen.", new Vector2(40, 140)));
+            aboutMenu.MenuObjects.Add(new MenuObjectText("Defeat them by placing towers you  ", new Vector2(40, 180)));
+            aboutMenu.MenuObjects.Add(new MenuObjectText("choose by pressing 1 or 2.", new Vector2(40, 220)));
+            aboutMenu.MenuObjects.Add(new MenuObjectText("Unselect with backspace.", new Vector2(40, 260)));
+            aboutMenu.MenuObjects.Add(new MenuObjectText("Close this screen with backspace", new Vector2(40, 300)));
         }
 
 
@@ -311,5 +328,10 @@ namespace Slutprojekt
         bool Collide(Vector2 pos);
 
         bool Collide(Point pos);
+    }
+
+    interface IClick
+    {
+        bool Click(MouseState state, MouseState previousState);
     }
 }

@@ -17,13 +17,6 @@ namespace Slutprojekt
      * Kommentarer
      * Api - Senare
      * Generisk klass
-     * Generisk metod
-     * 
-     * Kolla Interface betygnivå
-     * Kolla om upgradering är polymorfism
-     * 
-     * Mindre viktigt/manual labour:
-     *     Hur man skickar projektiler med instansen av det som sköt det
      */
      
     //api.openweathermap.org/data/2.5/forecast?id=524901&APPID=af8632ef1bec2c349fa2f2902007786b
@@ -145,7 +138,7 @@ namespace Slutprojekt
             }
         }
 
-        public static void ForStarting()
+        public static void ForStarting() //Det som är samma hos continiueplaying och startplaying
         {
             pState = PlayingState.start;
             enemiesTurningPoints1 = new List<Vector2>();
@@ -215,11 +208,10 @@ namespace Slutprojekt
                 }
 
 
-                if (keyboardState.IsKeyUp(Keys.Escape) && previousKeyboardState.IsKeyDown(Keys.Escape))
+                if (keyboardState.IsKeyUp(Keys.Escape) && previousKeyboardState.IsKeyDown(Keys.Escape)) //Pausar
                 {
                     pState = PlayingState.paused;
                     menuList.Add(pausedMenu);
-
                 }
             } 
             else if(pState == PlayingState.paused)
@@ -234,21 +226,21 @@ namespace Slutprojekt
             {
                 PlaceTowers(); //Känner om du har valt ett torn och om du klickar för att placera det
 
-                UnselectTower();
+                UnselectTower(); //Om du klickar där det valda tornet eller menyn inte är så "oväljer" du tornet
 
-                SelectTower();
+                SelectTower(); //Om du klickar på ett torn så väljs det och en meny oppnas
             }
 
             foreach(PartialMenu p in menuList) //Uppd. alla menyer
                 p.Update();
-            if(willMakeTSM)
+            if(willMakeTSM) //TSM == TowerSelectedMenu
             {
-                UnSelect();
+                UnSelect(); //Tar bort ev gamla menyer
                 MakeTSM();
                 willMakeTSM = false;
             }
 
-            if (willUnPause)
+            if (willUnPause) //Eftersom jag tar bort menyobjekt när jag opausar så kan jag inte göra det som en funktion i min meny
                 UnPause();
 
             foreach(BaseTower t in shootingTowers) //Skjuter
@@ -281,7 +273,7 @@ namespace Slutprojekt
             {
                 if (round == 1)
                 {
-                    AddEnemy(0.5, new Enemy1(round, tPoints));
+                    AddEnemy(0.5, new Enemy1(round, tPoints)); //AddEnemy(tidTillSpawn, vilken fiende)
                     AddEnemy(1.5, new Enemy1(round, tPoints));
                     AddEnemy(0.5, new Enemy1(round, tPoints));
                     AddEnemy(1, new Enemy1(round, tPoints));
@@ -385,7 +377,7 @@ namespace Slutprojekt
 
         public static void SpawnEnemy()
         {
-            spawnTime = 0;
+            spawnTime = 0; //Tiden som räknar mot nästa fiende startas om
             if (!firstESpawned) //Rundan avslutas när det inte finns fiender kvar. Detta är så att rundor inte ska avslutas innan de börjats
                 firstESpawned = true;
             unitsWhenPlaying.Add(enemySpawners.Dequeue().enemyToSpawn);
@@ -394,46 +386,42 @@ namespace Slutprojekt
 
         public static void RemoveDead()
         {
-            if (unitsWhenPlaying.Count > 0)
+            foreach (BaseUnit u in unitsWhenPlaying) //Rensar min units lista från döda fiender.
             {
-                foreach (BaseUnit u in unitsWhenPlaying) //Rensar min units lista från döda fiender.
+                if (u is BaseEnemy)
                 {
-                    if (u is BaseEnemy)
+                    if (!(u as BaseEnemy).IsDead)
                     {
-                        if (!(u as BaseEnemy).IsDead)
-                        {
-                            temp.Add(u); //temp är listan av det jag ska behålla. 
-                        }
-                        else
-                        {
-                            enemyCount--;
-                            money += (u as BaseEnemy).Gold;
-                            points += (u as BaseEnemy).DangerLevel;
-                        }
-                    }
-                    else if(u is Projectile)
-                    {
-                        if (!(u as Projectile).IsDead)
-                            temp.Add(u);
+                        temp.Add(u); //temp är listan av det jag ska behålla. 
                     }
                     else
                     {
-                        temp.Add(u);
+                        enemyCount--;
+                        money += (u as BaseEnemy).Gold;
+                        points += (u as BaseEnemy).DangerLevel;
                     }
                 }
-                
+                else if (u is Projectile)
+                {
+                    if (!(u as Projectile).IsDead)
+                        temp.Add(u);
+                }
+                else
+                {
+                    temp.Add(u);
+                }
             }
             unitsWhenPlaying.Clear();
             foreach(BaseUnit u in temp) //Gör på detta sätt eftersom temp.Add(u) lade till u i unitsWhenPlaying också när jag bara hade unitsWhenPlaying = temp
             {
-                unitsWhenPlaying.Add(u);
+                unitsWhenPlaying.Add(u); //Lägger in alla i temp, de jag skulle behålla
             }
             temp.Clear();
         }
 
         public static void PlaceTowers()
         {
-            CheckMouseOverTower();
+            CheckMouseOverTower(); //Kollar om musen är över ett torn
 
             if (keyboardState.IsKeyUp(Keys.D1) && previousKeyboardState.IsKeyDown(Keys.D1) && money >= t1U0Cost) //Väljer torn. I draw så kollar den vilket torn som är valt och ritar det vi musen
             {
@@ -450,14 +438,14 @@ namespace Slutprojekt
                 selectedTower = SelectedTower.Empty;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower1 && !mouseOverTower) //Placera torn
+            if (Click(mouseState, previousMouseState) && selectedTower == SelectedTower.Tower1 && !mouseOverTower) //Placera torn
             {
                 money -= t1U0Cost;
                 unitsWhenPlaying.Add(new T1U0(new Vector2(mouseState.X, mouseState.Y)));
                 selectedTower = SelectedTower.Empty;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && selectedTower == SelectedTower.Tower2 && !mouseOverTower) //Placera torn
+            if (Click(mouseState, previousMouseState) && selectedTower == SelectedTower.Tower2 && !mouseOverTower) //Placera torn
             {
                 money -= t2U0Cost;
                 unitsWhenPlaying.Add(new T2U0(new Vector2(mouseState.Position.X, mouseState.Position.Y)));
@@ -471,14 +459,13 @@ namespace Slutprojekt
             {
                 if (u is BaseTower)
                 {
-                    if (u.Collide(mouseState.Position) && mouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed && 
-                        !towerSelectedMenu.Collide(mouseState.Position))
+                    if (u.Collide(mouseState.Position) && Click(mouseState, previousMouseState) && !towerSelectedMenu.Collide(mouseState.Position)) //Om du klickar på torn, och inte på en meny
                     {
-                        chosenT = u as BaseTower;
+                        chosenT = u as BaseTower; //Väljer torn
 
-                        MakeTSM();
+                        MakeTSM(); //Gör meny
 
-                        break;
+                        break; //Vill inte kolla efter fler torn
                     }
                 }
             }
@@ -486,13 +473,13 @@ namespace Slutprojekt
 
         public static void MakeTSM()
         {
-            if (chosenT.Pos.X <= graphics.GraphicsDevice.Viewport.Width - 270)
+            if (chosenT.Pos.X <= graphics.GraphicsDevice.Viewport.Width - 270) //Två alternativa placeringar på meny, så menyn inte placeras över torn
             {
                 towerSelectedMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(0), new Rectangle(graphics.GraphicsDevice.Viewport.Width
-                                - 270, 0, 270, graphics.GraphicsDevice.Viewport.Height - 150));
+                                - 270, 0, 270, graphics.GraphicsDevice.Viewport.Height - 150)); //Gör menyn
 
                 if (chosenT is T1U0)
-                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 1", new Vector2(575, 15)));
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 1", new Vector2(575, 15))); //Skriver vilket torn
                 if (chosenT is T1U1)
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 2", new Vector2(575, 15)));
                 if (chosenT is T1U2)
@@ -508,28 +495,28 @@ namespace Slutprojekt
                 if (chosenT is T2U3)
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 2, Max", new Vector2(575, 15)));
 
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Dmg Done: " + (chosenT as BaseTower).DmgCaused, new Vector2(550, 65)));
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(565, 110, 200, 110), UpgradeTower));
-                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Upgrade", new Vector2(590, 145)));
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Dmg Done: " + (chosenT as BaseTower).DmgCaused, new Vector2(550, 65))); //Hur mycket skada som gjorts
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.Button, new Rectangle(565, 110, 200, 110), UpgradeTower)); //Knapp för uppgradering
+                towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Upgrade", new Vector2(590, 145))); //Text över knapp
                 towerSelectedMenu.MenuObjects.Add(new MenuObjectTex(Assets.Button, new Rectangle(590, 200, 150, 83))); //Ruta för attackmode
                 if (chosenT.Target == AttackMode.first) 
-                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("First", new Vector2(620, 220)));
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectText("First", new Vector2(620, 220))); //Text för vilket attackmode tornet har
                 else if (chosenT.Target == AttackMode.last)
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Last", new Vector2(620, 220)));
                 else
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Strong", new Vector2(620, 220)));
 
                 if (chosenT.Target == AttackMode.first)
-                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(540, 220, 40, 40), ToAMStrong));
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(540, 220, 40, 40), ToAMStrong)); // Ordning är Strong - First - Last
                 else if (chosenT.Target == AttackMode.last)
-                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(540, 220, 40, 40), ToAMFirst));
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(540, 220, 40, 40), ToAMFirst)); //Dessa 3 byter åt vänster
                 else
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowLeft, new Rectangle(540, 220, 40, 40), ToAMLast));
 
                 if (chosenT.Target == AttackMode.first)
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(747, 220, 40, 40), ToAMLast));
                 else if (chosenT.Target == AttackMode.last)
-                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(747, 220, 40, 40), ToAMStrong));
+                    towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(747, 220, 40, 40), ToAMStrong)); //Dessa 3 byter åt höger
                 else
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectButton(Assets.ArrowRight, new Rectangle(747, 220, 40, 40), ToAMFirst));
 
@@ -538,7 +525,7 @@ namespace Slutprojekt
             {
                 towerSelectedMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(0), new Rectangle(0, 150, 270, graphics.GraphicsDevice.Viewport.Height - 150));
 
-                if (chosenT is T1U0)
+                if (chosenT is T1U0) //Samma som den över men en annan position
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 1", new Vector2(45, 165)));
                 if (chosenT is T1U1)
                     towerSelectedMenu.MenuObjects.Add(new MenuObjectText("Tower 1, 2", new Vector2(45, 165)));
@@ -585,8 +572,8 @@ namespace Slutprojekt
 
         public static void UnselectTower()
         {
-            if(previousMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released && chosenT != null
-                && !(towerSelectedMenu.Collide(mouseState.Position) || chosenT.Collide(mouseState.Position + new Point(5)))) //Har klickat och är utanför torn och meny
+            if(Click(mouseState, previousMouseState) && chosenT != null && !(towerSelectedMenu.Collide(mouseState.Position)
+                || chosenT.Collide(mouseState.Position + new Point(5)))) //Har klickat och är utanför torn och meny
             {
                 chosenT = null;
                 UnSelect();
@@ -915,6 +902,11 @@ namespace Slutprojekt
             pState = PlayingState.playing;
             willUnPause = false;
             menuList.Remove(pausedMenu);
+        }
+
+        public static bool Click(MouseState state, MouseState previousState)
+        {
+            return (state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed) ? true : false;
         }
 
 

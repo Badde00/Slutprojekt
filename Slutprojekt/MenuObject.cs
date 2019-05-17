@@ -36,20 +36,7 @@ namespace Slutprojekt
             get { return id; }
         }
 
-        public bool Collide(Rectangle h)
-        {
-            return hitbox.Intersects(h) ? true : false;
-        }
-
-        public bool Collide(Vector2 p)
-        {
-            return hitbox.Contains(p) ? true : false;
-        }
-
-        public bool Collide(Point p)
-        {
-            return hitbox.Contains(p) ? true : false;
-        }
+        
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {

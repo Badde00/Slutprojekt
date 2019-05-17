@@ -9,42 +9,41 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Slutprojekt
 {
-    class MenuObjectButton : MenuObject
+    class MenuObjectButton : MenuObject, ICollision, IClick
     {
         private MouseState previousState;
         private MouseState state;
         private Func func;
 
-
-        public MouseState State
+        public bool Collide(Rectangle h)
         {
-            get { return state; }
+            return hitbox.Intersects(h) ? true : false;
         }
 
-        
+        public bool Collide(Vector2 p)
+        {
+            return hitbox.Contains(p) ? true : false;
+        }
+
+        public bool Collide(Point p)
+        {
+            return hitbox.Contains(p) ? true : false;
+        }
+
+        public bool Click(MouseState state, MouseState previousState)
+        {
+            return state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed ? true : false;
+        }
 
         public override void Update()
         {
             state = Mouse.GetState();
 
-            /*if (hitbox.Contains(state.Position) && state.LeftButton == ButtonState.Released && previousState.LeftButton == ButtonState.Pressed)
+            
+            if(Collide(state.Position) && Click(state, previousState))
             {
                 OnClick();
-            }*/
-
-            
-            if(hitbox.Contains(state.Position))
-            {
-               if(previousState.LeftButton == ButtonState.Pressed)
-               {
-                   if(state.LeftButton == ButtonState.Released)
-                   {
-                        OnClick();
-                   }
-               }
             }
-            
-
 
             previousState = state;
         }

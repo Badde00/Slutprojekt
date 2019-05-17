@@ -97,11 +97,11 @@ namespace Slutprojekt
                 }
             }
             if(target != null)
-                projectileDir = FindEnemy(target.Pos);
+                projectileDir = FindTargetDir<BaseUnit>(target);
 
 
             Playing.UnitsWhenPlaying.Add(new Projectile(pierce, projectileSpeed, (float)projectileDir, dmg,
-                projectileTex, new Vector2(pos.X + 25, pos.Y + 25), new Rectangle((int)pos.X + 25, (int)pos.Y +25, projectileTex.Width, projectileTex.Width), ProjDir()));
+                projectileTex, new Vector2(pos.X + 25, pos.Y + 25), new Rectangle((int)pos.X + 25, (int)pos.Y +25, projectileTex.Width, projectileTex.Width), ProjDir(), this));
         }
 
         public override void Update()
@@ -126,11 +126,9 @@ namespace Slutprojekt
             base.Draw(spriteBatch);
         }
 
-        protected float FindEnemy(Vector2 target)
+        protected float FindTargetDir<T>(BaseUnit u) where T : BaseUnit //För både fiende och ev andra torn om jag skaffar support torn
         {
-            float d;
-            d = (float)Math.Atan2((pos.Y - target.Y), (target.X - pos.X));
-
+            float d = (float)Math.Atan2((pos.Y - u.Pos.Y), (u.Pos.X - pos.X));
             return d;
         }
 

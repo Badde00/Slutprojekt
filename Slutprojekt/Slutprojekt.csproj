@@ -54,6 +54,7 @@
     <Compile Include="MenuObjectButton.cs" />
     <Compile Include="MenuObjectTex.cs" />
     <Compile Include="MenuObjectText.cs" />
+    <Compile Include="MyQueue.cs" />
     <Compile Include="PartialMenu.cs" />
     <Compile Include="Playing.cs" />
     <Compile Include="T1U0.cs" />
@@ -70,8 +71,6 @@
     <Compile Include="T2U1.cs" />
     <Compile Include="T2U2.cs" />
     <Compile Include="T2U3.cs" />
-    <Compile Include="Tower1.cs" />
-    <Compile Include="Tower2.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

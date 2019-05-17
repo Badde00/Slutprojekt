@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Slutprojekt
 {
-    class T1U1 : Tower1
+    class T1U1 : BaseTower
     {
         public T1U1(Vector2 zPos, int zDmgCaused)
         {
