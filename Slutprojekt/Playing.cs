@@ -67,7 +67,7 @@ namespace Slutprojekt
         private static double spawnTime; //Tiden mellan varje fiende
         private static List<BaseUnit> temp; //När jag tömmer unitsWhenPlaying, så jag inte ändrar i en foreach
         private static List<PartialMenu> menuList; //Alla menyer i playing, så de inte grupperas med de i Game1
-        private static Queue<EnemySpawner> enemySpawners; //Lägger fiender som ska spawnas i denna kö, så jag kan spawna dem en i taget
+        private static MyQueue<EnemySpawner> enemySpawners; //Lägger fiender som ska spawnas i denna kö, så jag kan spawna dem en i taget
         private static PlayingState pState;
         private static SelectedTower selectedTower;
         private static List<BaseTower> shootingTowers; //Jag kan inte skuta när jag uppdaterar alla unitsWhenPlaying, så jag gjorde denna listan och gör det efter
@@ -165,7 +165,7 @@ namespace Slutprojekt
             previousKeyboardState = Keyboard.GetState();
             spawnTime = 0;
             temp = new List<BaseUnit>();
-            enemySpawners = new Queue<EnemySpawner>();
+            enemySpawners = new MyQueue<EnemySpawner>();
             selectedTower = new SelectedTower();
             shootingTowers = new List<BaseTower>();
             lostMenu = new PartialMenu(new List<MenuObject>(), Assets.PartialMenu, new Vector2(200, 120), new Rectangle(200, 120, 400, 240));
@@ -277,6 +277,7 @@ namespace Slutprojekt
                     AddEnemy(1.5, new Enemy1(round, tPoints));
                     AddEnemy(0.5, new Enemy1(round, tPoints));
                     AddEnemy(1, new Enemy1(round, tPoints));
+
                 }
                 else if (round == 2)
                 {

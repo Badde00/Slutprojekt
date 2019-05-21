@@ -8,26 +8,32 @@ namespace Slutprojekt
 {
     class MyQueue<T>
     {
-        private bool IsEmpty;
-        private int noItems = 0;
+        private int noItems = 0; //Number of items
         T[] queue = new T[5];
 
-        public void EnQueue(T item)
+        public void Enqueue(T item)
         {
-            if (noItems == queue.GetLength())
+            if (noItems == queue.Length)
                 Expand();
             queue[noItems] = item;
             noItems++;
         }
 
-        public T DeQueue()
+        public T Dequeue()
         {
-            return default(T);
+            if(noItems < (float)queue.Length / 2 && noItems > 5)
+            {
+                Decrease();
+            }
+            noItems--;
+            T item = queue[noItems];
+            queue[noItems] = default(T);
+            return item;
         }
 
         public T Peek()
         {
-            return default(T);
+            return queue[noItems - 1];
         }
 
         public int Count
@@ -35,14 +41,37 @@ namespace Slutprojekt
             get { return noItems; }
         }
 
-        private void Expand()
+        public MyQueue()
         {
 
         }
 
+        private void Expand()
+        {
+            T[] temp = new T[queue.Length];
+            for (int i = 0; i < noItems; i++)
+            {
+                temp[i] = queue[i];
+            }
+            queue = new T[queue.Length * 2];
+            for (int i = 0; i < temp.Length; i++)
+            {
+                queue[i] = temp[i];
+            }
+        }
+
         private void Decrease()
         {
-
+            T[] temp = new T[noItems];
+            for (int i = 0; i < noItems; i++)
+            {
+                temp[i] = queue[i];
+            }
+            queue = new T[queue.Length / 2];
+            for (int i = 0; i < noItems; i++)
+            {
+                queue[i] = temp[i];
+            }
         }
     }
 }
